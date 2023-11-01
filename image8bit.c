@@ -172,6 +172,24 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
   assert (height >= 0);
   assert (0 < maxval && maxval <= PixMax);
   // Insert your code here!
+
+  Image img;
+  if((img = (Image) malloc(sizeof (struct image))) == NULL) { // // A alocação de memória falhou
+      errno = ENOMEM; // Configura o errno para indicar erro de falta de memória
+      return NULL;
+  }
+  if( (img->pixel = (uint8 *) calloc(width * height, sizeof(uint8))) == NULL )  { // Aloca memória para o array de pixels
+      free (img);
+      errno = ENOMEM; // Configura o errno para indicar erro de falta de memória
+      return NULL;
+  }
+
+  // A alocação de memória foi bem-sucedida. Configuração dos campos da estrutura
+  img->width = width;
+  img->height = height;
+  img->maxval = maxval;
+
+  return img;
 }
 
 /// Destroy the image pointed to by (*imgp).
@@ -182,6 +200,12 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
 void ImageDestroy(Image* imgp) { ///
   assert (imgp != NULL);
   // Insert your code here!
+
+  assert(*imgp != NULL);
+  Image img = *imgp;
+  free (img->pixel); // Liberta a memória alocada para o array de pixels (se alocado)
+  free (img); // Liberta a memória alocada para a estrutura da imagem
+  *imgp = NULL;
 }
 
 
