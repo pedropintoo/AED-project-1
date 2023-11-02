@@ -218,10 +218,10 @@ int main(int ac, char* av[]) {
   
   // Destroy remaining images
   while (n > 0) {
-    ImageDestroy(&img[--n]);
+      ImageDestroy(&img[--n]);
   }
 
-  error(err, errno, errors[err], ImageErrMsg());
+    error(err, errno, errors[err], ImageErrMsg());
   return 0;
 }
 

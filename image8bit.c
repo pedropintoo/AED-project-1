@@ -318,6 +318,27 @@ int ImageMaxval(Image img) { ///
 void ImageStats(Image img, uint8* min, uint8* max) { ///
   assert (img != NULL);
   // Insert your code here!
+  assert(min != NULL && max != NULL);
+
+  // Inicializar min e max com valores extremos para garantir que qualquer valor da imagem seja menor ou maior
+  *min = PixMax; // Valor máximo possível. const uint8 PixMax = 255 (ver em cima);
+  *max = 0;     // Valor mínimo possível
+
+  int x, y;
+  // Percorrer os pixels da imagem, usando ImageGetPixel(Image img, int x, int y). x varia de 0 até width e y varia de 0 até height
+  // Ir alterando o valor de *min e *max
+  for (y = 0; y < img->height; y++) {
+      for (x = 0; x < img->width; x++) {
+          uint8 pixel = ImageGetPixel(img, x, y);
+          if (pixel < *min) {
+              *min = pixel; // Atualiza o valor mínimo se um valor menor for encontrado
+          }
+          if (pixel > *max) {
+              *max = pixel; // Atualiza o valor máximo se um valor maior for encontrado
+          }
+      }
+  }
+
 }
 
 /// Check if pixel position (x,y) is inside img.
@@ -330,6 +351,15 @@ int ImageValidPos(Image img, int x, int y) { ///
 int ImageValidRect(Image img, int x, int y, int w, int h) { ///
   assert (img != NULL);
   // Insert your code here!
+
+  // Verificar se são >= 0 e Verificar se x é menor que weight, y é menor que height
+  // Esta função é usada como: assert (ImageValidRect(img1, x, y, img2->width, img2->height)); Por isso deve devolver 1 ou 0
+  assert( x >= 0 && y >= 0 && w >= 0 && h >= 0);
+  if(x>=w) return 0;
+  if(y>=h) return 0;
+
+  return 1; // se x é menor que weight && y é menor que height
+
 }
 
 /// Pixel get & set operations
@@ -344,8 +374,14 @@ int ImageValidRect(Image img, int x, int y, int w, int h) { ///
 // The returned index must satisfy (0 <= index < img->width*img->height)
 static inline int G(Image img, int x, int y) {
   int index;
+
   // Insert your code here!
-  assert (0 <= index && index < img->width*img->height);
+  int largura_da_imagem = img->width;
+
+  index = y * largura_da_imagem + x;
+
+  assert (0 <= index && index < img->width*img->height); // prof. já dava. A multiplicação da largura da imagem (img->width) pela altura da imagem (img->height) resulta no total de pixels na imagem.
+
   return index;
 }
 
@@ -380,6 +416,18 @@ void ImageSetPixel(Image img, int x, int y, uint8 level) { ///
 void ImageNegative(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
+
+  int x, y;
+  uint8 negative_level;
+  // Percorrer os pixels da imagem. void ImageSetPixel(Image img, int x, int y, uint8 level) >> Set the pixel at position (x,y) to new level.
+  // x varia de 0 até width e y varia de 0 até height
+  for (y = 0; y < img->height; y++) {
+      for (x = 0; x < img->width; x++) {
+          negative_level = PixMax - ImageGetPixel(img,x,y); // Valor_no_negativo = 255 - Valor_atual
+          ImageSetPixel(img, x, y, negative_level);
+      }
+  }
+
 }
 
 /// Apply threshold to image.
@@ -388,6 +436,22 @@ void ImageNegative(Image img) { ///
 void ImageThreshold(Image img, uint8 thr) { ///
   assert (img != NULL);
   // Insert your code here!
+
+  int x, y;
+  uint8 level;
+  // Percorrer os pixels da imagem. void ImageSetPixel(Image img, int x, int y, uint8 level) >> Set the pixel at position (x,y) to new level.
+  // x varia de 0 até width e y varia de 0 até height
+  for (y = 0; y < img->height; y++) {
+      for (x = 0; x < img->width; x++) {
+
+          level = ImageGetPixel(img,x,y);
+
+          if( level < thr ) ImageSetPixel(img, x, y, 0);
+          else ImageSetPixel(img, x, y, PixMax);
+
+      }
+  }
+
 }
 
 /// Brighten image by a factor.
@@ -396,8 +460,25 @@ void ImageThreshold(Image img, uint8 thr) { ///
 /// darken the image if factor<1.0.
 void ImageBrighten(Image img, double factor) { ///
   assert (img != NULL);
-  // ? assert (factor >= 0.0);
+  assert (factor >= 0.0); // Prof. tinha: // ? assert (factor >= 0.0);
   // Insert your code here!
+
+  int x, y;
+  uint8 level, new_level;
+
+  // Percorrer os pixels da imagem. void ImageSetPixel(Image img, int x, int y, uint8 level) >> Set the pixel at position (x,y) to new level.
+  // x varia de 0 até width e y varia de 0 até height
+  for (y = 0; y < img->height; y++) {
+      for (x = 0; x < img->width; x++) {
+
+          level = ImageGetPixel(img,x,y);
+          new_level = (uint8)level*factor; // (uint8) força a conversão do resultado da multiplicação para o tipo uint8
+          if( new_level > PixMax ) new_level = PixMax;
+
+          ImageSetPixel(img, x, y, new_level);
+      }
+  }
+
 }
 
 
@@ -437,6 +518,27 @@ Image ImageRotate(Image img) { ///
 Image ImageMirror(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
+
+  // Criar uma nova imagem com as mesmas dimensões e maxval
+  Image img2 = ImageCreate(img->width, img->height, img->maxval);
+  if (img2 == NULL) { // falha na criação da nova imagem
+      return NULL;
+  }
+
+  // void ImageSetPixel(Image img, int x, int y, uint8 level) >> Set the pixel at position (x,y) to new level.
+  // uint8 ImageGetPixel(Image img, int x, int y) >> Get the pixel (level) at position (x,y)
+
+  // Reflexão vertical, invertendo a ordem dos valores de cinza em cada linha
+  for (int y = 0; y < img->height; y++) {
+      for (int x = 0; x < img->width; x++) {
+          uint8 pixel = ImageGetPixel(img, x, y);
+          int new_x = img->width - x - 1; // Inverte a coordenada horizontal
+          ImageSetPixel(img2, new_x, y, pixel);
+      }
+  }
+
+  return img2;
+
 }
 
 /// Crop a rectangular subimage from img.
