@@ -509,8 +509,11 @@ Image ImageRotate(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
 
-    // Criar uma nova imagem com as mesmas dimensões e maxval
-    Image img2 = ImageCreate(img->width, img->height, img->maxval);
+  // rotate a n x m matrix by 90 degrees in anti-clockwise direction
+  int n=img->height;
+  int m=img->width;
+
+    Image img2 = ImageCreate(n, m, img->maxval); // ordem trocada
     if (img2 == NULL) { // falha na criação da nova imagem
         return NULL;
     }
@@ -518,16 +521,20 @@ Image ImageRotate(Image img) { ///
     // void ImageSetPixel(Image img, int x, int y, uint8 level) >> Set the pixel at position (x,y) to new level.
     // uint8 ImageGetPixel(Image img, int x, int y) >> Get the pixel (level) at position (x,y)
 
-    // Rotação 90 graus
-    for (int y = 0; y < img->height; y++) {
-        for (int x = 0; x < img->width; x++) {
-            uint8 pixel = ImageGetPixel(img, x, y);
-            int new_x = img->width - x - 1; // Inverte a coordenada horizontal
-            ImageSetPixel(img2, new_x, y, pixel);
-        }
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < m; j++) {
+      ImageSetPixel(img2, i, j, ImageGetPixel(img,j,n-i-1)); // img2[i][j] = img[j][n - i - 1];
     }
+  }
 
-    return img2;
+  // Cleanup >> Falta fazer >> ver ImageLoad(...) fazem algo parecido
+//  if (!success) {
+//    errsave = errno;
+//    ImageDestroy(&img2);
+//    errno = errsave;
+//  }
+
+  return img2;
 
 }
 
