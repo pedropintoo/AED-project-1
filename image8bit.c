@@ -507,6 +507,27 @@ void ImageBrighten(Image img, double factor) { ///
 Image ImageRotate(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
+
+    // Criar uma nova imagem com as mesmas dimensões e maxval
+    Image img2 = ImageCreate(img->width, img->height, img->maxval);
+    if (img2 == NULL) { // falha na criação da nova imagem
+        return NULL;
+    }
+
+    // void ImageSetPixel(Image img, int x, int y, uint8 level) >> Set the pixel at position (x,y) to new level.
+    // uint8 ImageGetPixel(Image img, int x, int y) >> Get the pixel (level) at position (x,y)
+
+    // Rotação 90 graus
+    for (int y = 0; y < img->height; y++) {
+        for (int x = 0; x < img->width; x++) {
+            uint8 pixel = ImageGetPixel(img, x, y);
+            int new_x = img->width - x - 1; // Inverte a coordenada horizontal
+            ImageSetPixel(img2, new_x, y, pixel);
+        }
+    }
+
+    return img2;
+
 }
 
 /// Mirror an image = flip left-right.
