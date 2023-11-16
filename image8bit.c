@@ -190,6 +190,7 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
   img->maxval = maxval;
 
   return img;
+
 }
 
 /// Destroy the image pointed to by (*imgp).
@@ -206,6 +207,7 @@ void ImageDestroy(Image* imgp) { ///
   free (img->pixel); // Liberta a memória alocada para o array de pixels (se alocado)
   free (img); // Liberta a memória alocada para a estrutura da imagem
   *imgp = NULL;
+
 }
 
 
@@ -478,7 +480,6 @@ void ImageBrighten(Image img, double factor) { ///
           ImageSetPixel(img, x, y, new_level);
       }
   }
-
 }
 
 
@@ -497,7 +498,7 @@ void ImageBrighten(Image img, double factor) { ///
 
 /// Rotate an image.
 /// Returns a rotated version of the image.
-/// The rotation is 90 degrees clockwise.
+/// The rotation is 90 degrees anti-clockwise.
 /// Ensures: The original img is not modified.
 /// 
 /// On success, a new image is returned.

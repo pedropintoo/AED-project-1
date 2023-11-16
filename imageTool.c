@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <error.h>
+#include "error.h"
 #include <assert.h>
 
 #include "image8bit.h"
@@ -86,6 +86,7 @@ static char* errors[] = {
 // add new operations for that purpose.
 
 int main(int ac, char* av[]) {
+  program_name = av[0];
   if (ac <= 1) {
     error(5, 0, "\n%s", USAGE);
   }
@@ -218,10 +219,11 @@ int main(int ac, char* av[]) {
   
   // Destroy remaining images
   while (n > 0) {
-      ImageDestroy(&img[--n]);
+
+    ImageDestroy(&img[--n]);
   }
 
-    error(err, errno, errors[err], ImageErrMsg());
+  error(err, errno, errors[err], ImageErrMsg());
   return 0;
 }
 
