@@ -354,11 +354,12 @@ int ImageValidRect(Image img, int x, int y, int w, int h) { ///
   assert (img != NULL);
   // Insert your code here!
 
-  // Verificar se são >= 0 e Verificar se x é menor que weight, y é menor que height
   // Esta função é usada como: assert (ImageValidRect(img1, x, y, img2->width, img2->height)); Por isso deve devolver 1 ou 0
   assert( x >= 0 && y >= 0 && w >= 0 && h >= 0);
-  if(x>=w) return 0;
-  if(y>=h) return 0;
+  assert(ImageValidPos(img, x, y));
+
+  if(w>=img->width) return 0;
+  if(h>=img->height) return 0;
 
   return 1; // se x é menor que weight && y é menor que height
 
