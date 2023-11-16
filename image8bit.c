@@ -594,7 +594,7 @@ Image ImageCrop(Image img, int x, int y, int w, int h) { ///
 
   for (int i = 0; i < w; i++) {
     for (int j = 0; j < h; j++) {
-      ImageSetPixel(img2, i, j, ImageGetPixel(img,i,j)); // img2[i][j] = img[j][n - i - 1];
+      ImageSetPixel(img2, i, j, ImageGetPixel(img,i,j));
     }
   }
 
@@ -619,8 +619,15 @@ Image ImageCrop(Image img, int x, int y, int w, int h) { ///
 void ImagePaste(Image img1, int x, int y, Image img2) { ///
   assert (img1 != NULL);
   assert (img2 != NULL);
-  assert (ImageValidRect(img1, x, y, img2->width, img2->height));
+  assert (ImageValidRect(img1, x, y, img2->width, img2->height)); /// Check if rectangular area (x,y,w,h) is completely inside img.
   // Insert your code here!
+
+  for (int i = 0; i < img2->width; i++) {
+    for (int j = 0; j < img2->height; j++) {
+      ImageSetPixel(img1, i, j, ImageGetPixel(img2,i,j));
+    }
+  }
+
 }
 
 /// Blend an image into a larger image.
@@ -634,6 +641,20 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
   assert (img2 != NULL);
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
+
+  for (int i = 0; i < w; i++) {
+    for (int j = 0; j < h; j++) {
+      uint8 pixel_img1 = ImageGetPixel(img1,i,j);
+      uint8 pixel_img2 = ImageGetPixel(img2,i,j);
+      uint8 pixel_total = (1-alpha)*pixel_img1 + alpha*pixel_img2; // First image is given a weight of (1-alpha) and second image is given alpha
+
+      if( pixel_total > PixMax ) {
+        pixel_total = PixMax;
+      }
+
+      ImageSetPixel(img1, i, j, pixel_total);
+    }
+  }
 }
 
 /// Compare an image to a subimage of a larger image.
