@@ -185,7 +185,7 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
     errno = ENOMEM; // Error: no memory
     return NULL;
   }
-  
+
   // Allocation success!
   img->width = width;
   img->height = height;
@@ -203,13 +203,11 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
 void ImageDestroy(Image* imgp) { ///
   assert (imgp != NULL);
   // Insert your code here!
+  if (*imgp == NULL) return;
 
-  assert(*imgp != NULL);
-  Image img = *imgp;
-  free (img->pixel); // Liberta a memória alocada para o array de pixels (se alocado)
-  free (img); // Liberta a memória alocada para a estrutura da imagem
+  free ((*imgp)->pixel); // Free array of pixels
+  free (*imgp); // Free struct image
   *imgp = NULL;
-
 }
 
 
@@ -324,25 +322,25 @@ void ImageStats(Image img, uint8* min, uint8* max) { ///
   // Insert your code here!
   assert(min != NULL && max != NULL);
 
-  // Inicializar min e max com valores extremos para garantir que qualquer valor da imagem seja menor ou maior
-  *min = PixMax; // Valor máximo possível. const uint8 PixMax = 255 (ver em cima);
-  *max = 0;     // Valor mínimo possível
+  *min = PixMax; // Min possible: 0
+  *max = 0;     // Max possible: PixMax
 
-  int x, y;
+  uint8 pixel;
   // Percorrer os pixels da imagem, usando ImageGetPixel(Image img, int x, int y). x varia de 0 até width e y varia de 0 até height
   // Ir alterando o valor de *min e *max
-  for (y = 0; y < img->height; y++) {
-      for (x = 0; x < img->width; x++) {
-          uint8 pixel = ImageGetPixel(img, x, y);
-          if (pixel < *min) {
-              *min = pixel; // Atualiza o valor mínimo se um valor menor for encontrado
-          }
-          if (pixel > *max) {
-              *max = pixel; // Atualiza o valor máximo se um valor maior for encontrado
-          }
-      }
+  for (size_t idx = 0; idx < img->height*img->width; idx++) {
+    pixel = img->pixel[idx];
+    if (pixel < *min) {
+      *min = pixel;
+    }
+    if (pixel > *max) {
+      *max = pixel;
+    }
+    if (*min == 0 && *max == PixMax) {
+      return;
+    }
   }
-
+  
 }
 
 /// Check if pixel position (x,y) is inside img.
@@ -668,7 +666,7 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
   assert (ImageValidPos(img1, x, y));
   // Insert your code here!
 
-  Image subimg1 = ImageCrop(img1,x,y,img2->width,img2->height); Nota: ImageCrop() /// Crop a rectangular subimage from img.
+  Image subimg1 = ImageCrop(img1,x,y,img2->width,img2->height); // Nota: ImageCrop() /// Crop a rectangular subimage from img.
 
   // Itera sobre os pixels da subimagem
   for (int i = 0; i < subimg1->width; i++) {
