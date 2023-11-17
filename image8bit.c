@@ -173,18 +173,20 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
   assert (0 < maxval && maxval <= PixMax);
   // Insert your code here!
 
-  Image img;
-  if((img = (Image) malloc(sizeof (struct image))) == NULL) { // // A alocação de memória falhou
-      errno = ENOMEM; // Configura o errno para indicar erro de falta de memória
-      return NULL;
-  }
-  if( (img->pixel = (uint8 *) calloc(width * height, sizeof(uint8))) == NULL )  { // Aloca memória para o array de pixels
-      free (img);
-      errno = ENOMEM; // Configura o errno para indicar erro de falta de memória
-      return NULL;
-  }
+  Image img = (Image) malloc(sizeof (struct image));
 
-  // A alocação de memória foi bem-sucedida. Configuração dos campos da estrutura
+  if (img == NULL) { // Allocation fail!
+    errno = ENOMEM; // Error: no memory
+    return NULL;
+  }
+  img->pixel = (uint8 *) malloc(width * height * sizeof(uint8));
+  if (img->pixel == NULL)  { // Allocation fail
+    free (img);
+    errno = ENOMEM; // Error: no memory
+    return NULL;
+  }
+  
+  // Allocation success!
   img->width = width;
   img->height = height;
   img->maxval = maxval;
@@ -642,8 +644,8 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
   assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
 
-  for (int i = 0; i < w; i++) {
-    for (int j = 0; j < h; j++) {
+  for (int i = 0; i < img1->width; i++) {
+    for (int j = 0; j < img2->height; j++) {
       uint8 pixel_img1 = ImageGetPixel(img1,i,j);
       uint8 pixel_img2 = ImageGetPixel(img2,i,j);
       uint8 pixel_total = (1-alpha)*pixel_img1 + alpha*pixel_img2; // First image is given a weight of (1-alpha) and second image is given alpha
