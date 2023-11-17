@@ -438,24 +438,17 @@ void ImageThreshold(Image img, uint8 thr) { ///
 /// darken the image if factor<1.0.
 void ImageBrighten(Image img, double factor) { ///
   assert (img != NULL);
-  assert (factor >= 0.0); // Prof. tinha: // ? assert (factor >= 0.0);
+  assert (factor >= 0.0);
   // Insert your code here!
 
-  int x, y;
-  uint8 level, new_level;
+  uint8 new_level;
+  
+  for (size_t idx = 0; idx < img->height*img->width; idx++) {
+    new_level = (uint8)(img->pixel[idx]*factor + 0.5); // 0.5 to ensure proper rounding when converting to an uint8
 
-  // Percorrer os pixels da imagem. void ImageSetPixel(Image img, int x, int y, uint8 level) >> Set the pixel at position (x,y) to new level.
-  // x varia de 0 até width e y varia de 0 até height
-  for (y = 0; y < img->height; y++) {
-      for (x = 0; x < img->width; x++) {
-
-          level = ImageGetPixel(img,x,y);
-          new_level = (uint8)level*factor; // (uint8) força a conversão do resultado da multiplicação para o tipo uint8
-          if( new_level > PixMax ) new_level = PixMax;
-
-          ImageSetPixel(img, x, y, new_level);
-      }
+    img->pixel[idx] = (new_level < PixMax) ? new_level : PixMax;
   }
+        
 }
 
 
