@@ -413,8 +413,9 @@ void ImageNegative(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
   
+  // Loop through all pixels and apply the function neg(level) = PixMax - level
   for (size_t idx = 0; idx < img->width*img->height; idx++) {
-    img->pixel[idx] = PixMax - img->pixel[idx]; // Apply the function: b(x) = PixMax - x
+    img->pixel[idx] = PixMax - img->pixel[idx];
   }
 }
 
@@ -424,22 +425,11 @@ void ImageNegative(Image img) { ///
 void ImageThreshold(Image img, uint8 thr) { ///
   assert (img != NULL);
   // Insert your code here!
-
-  int x, y;
-  uint8 level;
-  // Percorrer os pixels da imagem. void ImageSetPixel(Image img, int x, int y, uint8 level) >> Set the pixel at position (x,y) to new level.
-  // x varia de 0 até width e y varia de 0 até height
-  for (y = 0; y < img->height; y++) {
-      for (x = 0; x < img->width; x++) {
-
-          level = ImageGetPixel(img,x,y);
-
-          if( level < thr ) ImageSetPixel(img, x, y, 0);
-          else ImageSetPixel(img, x, y, PixMax);
-
-      }
+  
+  // Loop through all pixels and apply the threshold
+  for (size_t idx = 0; idx < img->width*img->height; idx++) {
+    img->pixel[idx] = (img->pixel[idx] < thr) ? 0 : PixMax;
   }
-
 }
 
 /// Brighten image by a factor.
