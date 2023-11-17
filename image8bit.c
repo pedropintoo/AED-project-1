@@ -352,16 +352,12 @@ int ImageValidPos(Image img, int x, int y) { ///
 int ImageValidRect(Image img, int x, int y, int w, int h) { ///
   assert (img != NULL);
   // Insert your code here!
-
-  // Esta função é usada como: assert (ImageValidRect(img1, x, y, img2->width, img2->height)); Por isso deve devolver 1 ou 0
-  assert( x >= 0 && y >= 0 && w >= 0 && h >= 0);
-  assert(ImageValidPos(img, x, y));
-
-  if(w>=img->width) return 0;
-  if(h>=img->height) return 0;
-
-  return 1; // se x é menor que weight && y é menor que height
-
+  assert(w > 0 && h > 0);
+  
+  // Interpretation:
+  /// The rectangle is specified by the top left corner coords (x, y) and
+  /// width w and height h.
+  return ImageValidPos(img, x, y) && ImageValidPos(img, x+(w-1), y+(h-1));
 }
 
 /// Pixel get & set operations
