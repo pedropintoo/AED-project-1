@@ -372,13 +372,11 @@ int ImageValidRect(Image img, int x, int y, int w, int h) { ///
 // The returned index must satisfy (0 <= index < img->width*img->height)
 static inline int G(Image img, int x, int y) {
   int index;
-
   // Insert your code here!
-  int largura_da_imagem = img->width;
 
-  index = y * largura_da_imagem + x;
+  index = y * img->width + x;
 
-  assert (0 <= index && index < img->width*img->height); // prof. já dava. A multiplicação da largura da imagem (img->width) pela altura da imagem (img->height) resulta no total de pixels na imagem.
+  assert (0 <= index && index < img->width*img->height);
 
   return index;
 }
