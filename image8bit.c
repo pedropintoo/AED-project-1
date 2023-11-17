@@ -415,6 +415,7 @@ void ImageNegative(Image img) { ///
   
   // Loop through all pixels and apply the function neg(level) = PixMax - level
   for (size_t idx = 0; idx < img->width*img->height; idx++) {
+    // Calculate the new position after rotation and assign the pixel value
     img->pixel[idx] = PixMax - img->pixel[idx];
   }
 }
@@ -443,6 +444,7 @@ void ImageBrighten(Image img, double factor) { ///
 
   uint8 new_level;
   
+  // Loop through all pixels and apply the brighten
   for (size_t idx = 0; idx < img->height*img->width; idx++) {
     new_level = (uint8)(img->pixel[idx]*factor + 0.5); // 0.5 to ensure proper rounding when converting to an uint8
 
@@ -477,32 +479,21 @@ Image ImageRotate(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
 
-  // rotate a n x m matrix by 90 degrees in anti-clockwise direction
-  int n=img->height;
-  int m=img->width;
+  // rotate a (n x m) matrix by 90 degrees in anti-clockwise direction
+  int n = img->height;
+  int m = img->width;
+  
+  Image imgR = ImageCreate(n, m, img->maxval); // (m x n) image
+  // imgR->width = n
+  // imgR->height = m
+  if (imgR == NULL) return NULL;
 
-    Image img2 = ImageCreate(n, m, img->maxval); // ordem trocada
-    if (img2 == NULL) { // falha na criação da nova imagem
-        return NULL;
-    }
-
-    // void ImageSetPixel(Image img, int x, int y, uint8 level) >> Set the pixel at position (x,y) to new level.
-    // uint8 ImageGetPixel(Image img, int x, int y) >> Get the pixel (level) at position (x,y)
-
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < m; j++) {
-      ImageSetPixel(img2, i, j, ImageGetPixel(img,j,n-i-1)); // img2[i][j] = img[j][n - i - 1];
-    }
+  // Loop through all pixels and apply the rotation
+  for (size_t idx = 0; idx < n*m; idx++) {
+    imgR->pixel[((m-1)-(idx%m))*n + (idx/m)] = img->pixel[idx];
   }
 
-  // Cleanup >> Falta fazer >> ver ImageLoad(...) fazem algo parecido
-//  if (!success) {
-//    errsave = errno;
-//    ImageDestroy(&img2);
-//    errno = errsave;
-//  }
-
-  return img2;
+  return imgR;
 
 }
 
