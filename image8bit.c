@@ -657,7 +657,7 @@ void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
   }
 }
 
-/// Compare an image to a subimage of a larger image.
+/// Compare an image to a subimage of a larger image. Nota:
 /// Returns 1 (true) if img2 matches subimage of img1 at pos (x, y).
 /// Returns 0, otherwise.
 int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
@@ -665,6 +665,20 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
   assert (img2 != NULL);
   assert (ImageValidPos(img1, x, y));
   // Insert your code here!
+
+  Image subimg1 = ImageCrop(img1,x,y,img2->width,img2->height); Nota: ImageCrop() /// Crop a rectangular subimage from img.
+
+  // Itera sobre os pixels da subimagem
+  for (int i = 0; i < subimg1->width; i++) {
+    for (int j = 0; j < subimg1->height; j++) {
+      if(ImageGetPixel(subimg1,i,j) != ImageGetPixel(img2,i,j))  {
+        return 0;
+        break;
+      }
+    }
+  }
+
+  return 1;
 }
 
 /// Locate a subimage inside another image.
@@ -675,6 +689,17 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   assert (img1 != NULL);
   assert (img2 != NULL);
   // Insert your code here!
+
+  for (int i = 0; i <= img1->width - img2->width; i++) { //  garante que a subimagem (img2) se encaixe completamente na imagem principal (img1)
+    for (int j = 0; j <= img1->height - img2->height; j++) {
+      if (ImageMatchSubImage(img1, i, j, img2)) {
+        *px = i;
+        *py = j;
+        return 1;
+      }
+    }
+  }
+  return 0;
 }
 
 
