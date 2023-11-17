@@ -412,18 +412,10 @@ void ImageSetPixel(Image img, int x, int y, uint8 level) { ///
 void ImageNegative(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
-
-  int x, y;
-  uint8 negative_level;
-  // Percorrer os pixels da imagem. void ImageSetPixel(Image img, int x, int y, uint8 level) >> Set the pixel at position (x,y) to new level.
-  // x varia de 0 até width e y varia de 0 até height
-  for (y = 0; y < img->height; y++) {
-      for (x = 0; x < img->width; x++) {
-          negative_level = PixMax - ImageGetPixel(img,x,y); // Valor_no_negativo = 255 - Valor_atual
-          ImageSetPixel(img, x, y, negative_level);
-      }
+  
+  for (size_t idx = 0; idx < img->width*img->height; idx++) {
+    img->pixel[idx] = PixMax - img->pixel[idx]; // Apply the function: b(x) = PixMax - x
   }
-
 }
 
 /// Apply threshold to image.
