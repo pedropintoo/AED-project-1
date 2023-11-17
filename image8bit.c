@@ -357,7 +357,7 @@ int ImageValidRect(Image img, int x, int y, int w, int h) { ///
   // Interpretation:
   /// The rectangle is specified by the top left corner coords (x, y) and
   /// width w and height h.
-  return ImageValidPos(img, x, y) && ImageValidPos(img, x+(w-1), y+(h-1));
+  return ImageValidPos(img, x, y) && ( (w == 1 && h == 1) || ImageValidPos(img, x+(w-1), y+(h-1)));
 }
 
 /// Pixel get & set operations
