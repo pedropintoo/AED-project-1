@@ -326,8 +326,7 @@ void ImageStats(Image img, uint8* min, uint8* max) { ///
   *max = 0;     // Max possible: PixMax
 
   uint8 pixel;
-  // Percorrer os pixels da imagem, usando ImageGetPixel(Image img, int x, int y). x varia de 0 até width e y varia de 0 até height
-  // Ir alterando o valor de *min e *max
+  // Check each pixel value (exit when min possible and max possible condicion)
   for (size_t idx = 0; idx < img->height*img->width; idx++) {
     pixel = img->pixel[idx];
     if (pixel < *min) {
