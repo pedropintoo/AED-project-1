@@ -449,7 +449,6 @@ void ImageBrighten(Image img, double factor) { ///
     new_level = (int)((double)(img->pixel[idx]*factor) + 0.5); // 0.5 to ensure proper rounding when converting to an int
 
     img->pixel[idx] = (new_level < img->maxval) ? new_level : img->maxval;
-    printf("%d\n",img->pixel[idx]);
   }
         
 }
