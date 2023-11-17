@@ -322,8 +322,8 @@ void ImageStats(Image img, uint8* min, uint8* max) { ///
   // Insert your code here!
   assert(min != NULL && max != NULL);
 
-  *min = PixMax; // Min possible: 0
-  *max = 0;     // Max possible: PixMax
+  *min = img->maxval; // Min possible: 0
+  *max = 0;           // Max possible: img->maxval
 
   uint8 pixel;
   // Check each pixel value (exit when min possible and max possible condicion)
@@ -335,7 +335,7 @@ void ImageStats(Image img, uint8* min, uint8* max) { ///
     if (pixel > *max) {
       *max = pixel;
     }
-    if (*min == 0 && *max == PixMax) {
+    if (*min == 0 && *max == img->maxval) {
       return;
     }
   }
@@ -413,10 +413,10 @@ void ImageNegative(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
   
-  // Loop through all pixels and apply the function neg(level) = PixMax - level
+  // Loop through all pixels and apply the function neg(level) = img->maxval - level
   for (size_t idx = 0; idx < img->width*img->height; idx++) {
     // Calculate the new position after rotation and assign the pixel value
-    img->pixel[idx] = PixMax - img->pixel[idx];
+    img->pixel[idx] = img->maxval - img->pixel[idx];
   }
 }
 
@@ -429,7 +429,7 @@ void ImageThreshold(Image img, uint8 thr) { ///
   
   // Loop through all pixels and apply the threshold
   for (size_t idx = 0; idx < img->width*img->height; idx++) {
-    img->pixel[idx] = (img->pixel[idx] < thr) ? 0 : PixMax;
+    img->pixel[idx] = (img->pixel[idx] < thr) ? 0 : img->maxval;
   }
 }
 
@@ -442,13 +442,14 @@ void ImageBrighten(Image img, double factor) { ///
   assert (factor >= 0.0);
   // Insert your code here!
 
-  uint8 new_level;
+  int new_level;
   
   // Loop through all pixels and apply the brighten
   for (size_t idx = 0; idx < img->height*img->width; idx++) {
-    new_level = (uint8)(img->pixel[idx]*factor + 0.5); // 0.5 to ensure proper rounding when converting to an uint8
+    new_level = (int)((double)(img->pixel[idx]*factor) + 0.5); // 0.5 to ensure proper rounding when converting to an int
 
-    img->pixel[idx] = (new_level < PixMax) ? new_level : PixMax;
+    img->pixel[idx] = (new_level < img->maxval) ? new_level : img->maxval;
+    printf("%d\n",img->pixel[idx]);
   }
         
 }
