@@ -508,25 +508,20 @@ Image ImageMirror(Image img) { ///
   assert (img != NULL);
   // Insert your code here!
 
-  // Criar uma nova imagem com as mesmas dimensões e maxval
-  Image img2 = ImageCreate(img->width, img->height, img->maxval);
-  if (img2 == NULL) { // falha na criação da nova imagem
-      return NULL;
+  int n = img->height;
+  int m = img->width;
+
+  Image imgM = ImageCreate(img->width, img->height, img->maxval); // (m x n) image
+  if (imgM == NULL) return NULL;
+
+    // Loop through all pixels and apply the mirror
+  for (size_t idx = 0; idx < m*n; idx++ ) {
+    int new_x = (m-1) - (idx%m) ; // Horizontal revert
+    imgM->pixel[((idx/m))*n + new_x] = img->pixel[idx];
   }
+  
 
-  // void ImageSetPixel(Image img, int x, int y, uint8 level) >> Set the pixel at position (x,y) to new level.
-  // uint8 ImageGetPixel(Image img, int x, int y) >> Get the pixel (level) at position (x,y)
-
-  // Reflexão vertical, invertendo a ordem dos valores de cinza em cada linha
-  for (int y = 0; y < img->height; y++) {
-      for (int x = 0; x < img->width; x++) {
-          uint8 pixel = ImageGetPixel(img, x, y);
-          int new_x = img->width - x - 1; // Inverte a coordenada horizontal
-          ImageSetPixel(img2, new_x, y, pixel);
-      }
-  }
-
-  return img2;
+  return imgM;
 
 }
 
