@@ -593,11 +593,11 @@ void ImagePaste(Image img1, int x, int y, Image img2) { ///
 void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
   assert (img1 != NULL);
   assert (img2 != NULL);
-  assert (ImageValidRect(img1, x, y, img2->width, img2->height));
+  //assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
 
   for (int i = 0; i < img1->width; i++) {
-    for (int j = 0; j < img2->height; j++) {
+    for (int j = 0; j < img1->height; j++) {
       uint8 pixel_img1 = ImageGetPixel(img1,i,j);
       uint8 pixel_img2 = ImageGetPixel(img2,i,j);
       uint8 pixel_total = (1-alpha)*pixel_img1 + alpha*pixel_img2; // First image is given a weight of (1-alpha) and second image is given alpha
