@@ -516,8 +516,7 @@ Image ImageMirror(Image img) { ///
 
     // Loop through all pixels and apply the mirror
   for (size_t idx = 0; idx < m*n; idx++ ) {
-    int new_x = (m-1) - (idx%m) ; // Horizontal revert
-    imgM->pixel[((idx/m))*n + new_x] = img->pixel[idx];
+    imgM->pixel[((idx/m))*n + (m-1) - (idx%m)] = img->pixel[idx];
   }
   
 
