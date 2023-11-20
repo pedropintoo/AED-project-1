@@ -357,7 +357,7 @@ int ImageValidRect(Image img, int x, int y, int w, int h) { ///
   // Interpretation:
   /// The rectangle is specified by the top left corner coords (x, y) and
   /// width w and height h.
-  return ImageValidPos(img, x, y) && ( (w == 1 && h == 1) || ImageValidPos(img, x+(w-1), y+(h-1)));
+  return ImageValidPos(img, x, y) && ImageValidPos(img, x+(w-1), y+(h-1));
 }
 
 /// Pixel get & set operations
@@ -511,7 +511,7 @@ Image ImageMirror(Image img) { ///
   int n = img->height;
   int m = img->width;
 
-  Image imgM = ImageCreate(img->width, img->height, img->maxval); // (m x n) image
+  Image imgM = ImageCreate(m, n, img->maxval); // (n x m) image
   if (imgM == NULL) return NULL;
 
     // Loop through all pixels and apply the mirror
@@ -586,22 +586,18 @@ void ImagePaste(Image img1, int x, int y, Image img2) { ///
 void ImageBlend(Image img1, int x, int y, Image img2, double alpha) { ///
   assert (img1 != NULL);
   assert (img2 != NULL);
-  //assert (ImageValidRect(img1, x, y, img2->width, img2->height));
+  assert (ImageValidRect(img1, x, y, img2->width, img2->height));
   // Insert your code here!
 
-  for (int i = 0; i < img1->width; i++) {
-    for (int j = 0; j < img1->height; j++) {
-      uint8 pixel_img1 = ImageGetPixel(img1,i,j);
-      uint8 pixel_img2 = ImageGetPixel(img2,i,j);
-      uint8 pixel_total = (1-alpha)*pixel_img1 + alpha*pixel_img2; // First image is given a weight of (1-alpha) and second image is given alpha
+  int new_level;
 
-      if( pixel_total > PixMax ) {
-        pixel_total = PixMax;
-      }
-
-      ImageSetPixel(img1, i, j, pixel_total);
+  for (int i = 0; i < img2->width; i++) {
+    for (int j = 0; j < img2->height; j++) {
+      new_level = (int)((double)(ImageGetPixel(img2,i,j)*alpha + ImageGetPixel(img1,x+i,y+j)*(1-alpha)) + 0.5); // 0.5 to ensure proper rounding when converting to an int
+      ImageSetPixel(img1, x+i, y+j, (new_level < img1->maxval) ? new_level : img1->maxval);
     }
   }
+
 }
 
 /// Compare an image to a subimage of a larger image. Nota:
@@ -658,5 +654,29 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 /// The image is changed in-place.
 void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
+  Image blurImg = ImageCreate(img->width, img->height, img->maxval);
+
+  int w = img->width; int h = img->height;
+
+  int sum, count;
+
+  for (int x = 0; x < w; x++) {
+    for (int y = 0; y < h; y++) {
+      sum = 0; count = 0;
+      for(int px = -dx; px <= dx; px++) {
+        for (int py = -dy; py <= dy; py++) {
+          
+          if (ImageValidPos(img,x+px,y+py)) {
+            sum += ImageGetPixel(img,x+px,y+py);
+            count++;
+          }
+        }
+      }
+      ImageSetPixel(blurImg, x, y, (int)((double)sum/(double)count + 0.5));
+    }
+  }
+
+  ImagePaste(img, 0, 0, blurImg);
+  ImageDestroy(&blurImg);
 }
 
