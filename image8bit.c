@@ -540,23 +540,17 @@ Image ImageCrop(Image img, int x, int y, int w, int h) { ///
   assert (img != NULL);
   assert (ImageValidRect(img, x, y, w, h));
   // Insert your code here!
-  Image img2 = ImageCreate(w, h, img->maxval); // ohe returned image has width w and height h.
-  if (img2 == NULL) { // falha na criação da nova imagem
+  
+  Image img2 = ImageCreate(w, h, img->maxval); // (w x h)
+  if (img2 == NULL) { 
     return NULL;
   }
 
   for (int i = 0; i < w; i++) {
     for (int j = 0; j < h; j++) {
-      ImageSetPixel(img2, i, j, ImageGetPixel(img,i,j));
+      ImageSetPixel(img2, i, j, ImageGetPixel(img,x+i,y+j));
     }
   }
-
-  // Cleanup >> Falta fazer >> ver ImageLoad(...) fazem algo parecido
-//  if (!success) {
-//    errsave = errno;
-//    ImageDestroy(&img2);
-//    errno = errsave;
-//  }
 
   return img2;
 
