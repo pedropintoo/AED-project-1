@@ -571,7 +571,7 @@ void ImagePaste(Image img1, int x, int y, Image img2) { ///
 
   for (int i = 0; i < img2->width; i++) {
     for (int j = 0; j < img2->height; j++) {
-      ImageSetPixel(img1, i, j, ImageGetPixel(img2,i,j));
+      ImageSetPixel(img1, x+i, y+j, ImageGetPixel(img2,i,j));
     }
   }
 
