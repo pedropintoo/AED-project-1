@@ -514,7 +514,7 @@ Image ImageMirror(Image img) { ///
   Image imgM = ImageCreate(m, n, img->maxval); // (n x m) image
   if (imgM == NULL) return NULL;
 
-    // Loop through all pixels and apply the mirror
+  // Loop through all pixels and apply the mirror
   for (size_t idx = 0; idx < m*n; idx++ ) {
     imgM->pixel[((idx/m))*n + (m-1) - (idx%m)] = img->pixel[idx];
   }
@@ -610,18 +610,18 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
   // Insert your code here!
 
   Image subimg1 = ImageCrop(img1,x,y,img2->width,img2->height); // Nota: ImageCrop() /// Crop a rectangular subimage from img.
+  if(subimg1 == NULL){
+    perror("Error croping a rectangular subimage from img1.");
+    return EXIT_FAILURE;
+  }
 
-  // Itera sobre os pixels da subimagem
-  for (int i = 0; i < subimg1->width; i++) {
-    for (int j = 0; j < subimg1->height; j++) {
-      if(ImageGetPixel(subimg1,i,j) != ImageGetPixel(img2,i,j))  {
-        return 0;
-        break;
-      }
-    }
+  // Loop through all pixels and apply the mirror
+  for (size_t idx = 0; idx < img2->width * img2->height; idx++ ) {
+    if( subimg1->pixel[idx] != img2->pixel[idx] ) return 0;
   }
 
   return 1;
+
 }
 
 /// Locate a subimage inside another image.
@@ -633,15 +633,16 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   assert (img2 != NULL);
   // Insert your code here!
 
-  for (int i = 0; i <= img1->width - img2->width; i++) { //  garante que a subimagem (img2) se encaixe completamente na imagem principal (img1)
-    for (int j = 0; j <= img1->height - img2->height; j++) {
-      if (ImageMatchSubImage(img1, i, j, img2)) {
-        *px = i;
-        *py = j;
+  for( int x=0; x <= img1->width; x++) {
+    for( int y=0; y <= img1->width; y++) {
+      if(ImageMatchSubImage(img1,x,y,img2)) {
+        *px = x;
+        *py = y;
         return 1;
       }
     }
   }
+
   return 0;
 }
 
