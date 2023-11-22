@@ -650,31 +650,48 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 /// The image is changed in-place.
 void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
-  Image blurImg = ImageCreate(img->width, img->height, img->maxval);
-
   int w = img->width; int h = img->height;
-
-  int sum, count;
-
+  int cumSum[w][h];
+  int total[w][h];
+  int present;  
+  // Cumulative sums Ox
+  for (int y = 0; y < h; y++) {
+    present = 0;
+    for (int x = 0; x < w; x++) {   
+      present += ImageGetPixel(img, x, y);
+      cumSum[x][y] = present;
+    } 
+  }
+  // // Cumulative sums Oy
   for (int x = 0; x < w; x++) {
-    for (int y = 0; y < h; y++) {
-      sum = 0; count = 0;
-      for(int px = -dx; px <= dx; px++) {
-        for (int py = -dy; py <= dy; py++) {
-          
-          if (ImageValidPos(img,x+px,y+py)) {
-            sum += ImageGetPixel(img,x+px,y+py);
-            count++;
-          }
-        }
-      }
-      ImageSetPixel(blurImg, x, y, (int)((double)sum/(double)count + 0.5));
-    }
+    present = 0;
+    for (int y = 0; y < h; y++) {   
+      present += cumSum[x][y];
+      cumSum[x][y] = present;
+    } 
   }
 
-  // copy the image
-  for(size_t idx = 0; idx < h*w; idx++) img->pixel[idx] = blurImg->pixel[idx];
+  // for (int y = 0; y < h; y++) {  
+  //   for (int x = 0; x < w; x++) {
+  //     printf("%15d ",cumSum[x][y]);
+  //   } 
+  //   printf("\n");
+  // }
+  // printf("\n");
+  // Average
+  int num = (2 * dx + 1) * (2 * dy + 1);
+    for (int x = dx; x < w - dx; x++) {
+        for (int y = dy; y < h - dy; y++) {
+            total[x][y] = (cumSum[x+1][y+1] - cumSum[x-dx][y+1] - cumSum[x+1][y-dy] + cumSum[x-dx][y-dy]) / num;
+        }
+    }
 
-  ImageDestroy(&blurImg);
+// for (int y = 2; y < h-1; y++) {  
+//     for (int x = 2; x < w-1; x++) {
+//       printf("%15d ",total[x][y]);
+//     } 
+//     printf("\n");
+//   }
+
 }
 
