@@ -1,0 +1,11 @@
+ultimaColunaEinstein.pgm
+./imageTool pgm/large/einstein_940x940.pgm crop 939,0,1,940 save ultimaColunaEinstein.pgm
+
+./imageTool ultimaColunaEinstein.pgm pgm/large/einstein_940x940.pgm locate SUCCESS
+
+ultimaLinhaEinstein.pgm
+./imageTool pgm/large/einstein_940x940.pgm crop 0,939,940,1 save ultimaLinhaEinstein.pgm
+
+./imageTool ultimaLinhaEinstein.pgm pgm/large/einstein_940x940.pgm locate SUCCESS
+
+
