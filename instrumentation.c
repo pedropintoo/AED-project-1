@@ -85,6 +85,7 @@ double InstrCTU = 1.0;  ///extern
 /// Find the Calibrated Time Unit (CTU).
 /// Run and time a loop of basic memory and arithmetic operations to set
 /// a reasonably cpu-independent time unit.
+
 void InstrCalibrate(void) { ///
   const int size = 4*1024;     // 2^12!
   const int mask = size - 1;

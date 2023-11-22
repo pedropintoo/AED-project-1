@@ -147,7 +147,7 @@ void ImageInit(void) { ///
   InstrCalibrate();
   InstrName[0] = "pixmem";  // InstrCount[0] will count pixel array acesses
   // Name other counters here...
-  
+//  InstrPrint();
 }
 
 // Macros to simplify accessing instrumentation counters:
