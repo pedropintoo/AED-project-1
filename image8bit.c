@@ -642,7 +642,6 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   return 0;
 }
 
-
 /// Filtering
 
 /// Blur an image by a applying a (2dx+1)x(2dy+1) mean filter.
@@ -673,7 +672,9 @@ void ImageBlur(Image img, int dx, int dy) { ///
     }
   }
 
-  ImagePaste(img, 0, 0, blurImg);
+  // copy the image
+  for(size_t idx = 0; idx < h*w; idx++) img->pixel[idx] = blurImg->pixel[idx];
+
   ImageDestroy(&blurImg);
 }
 

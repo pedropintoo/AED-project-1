@@ -1,7 +1,3 @@
-//
-// Created by joao on 11/22/23.
-//
-
 // Version 1 - With Crop
 
 int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
