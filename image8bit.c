@@ -663,6 +663,7 @@ static unsigned long int** ImageCumSum(Image img) {
   unsigned long int present;
 
   // Era possivel misturar
+  // Comecar linha 0 e coluna 0
   // Cumulative sums Ox
   for (size_t y = 0; y < img->height; y++) {
     present = 0;
@@ -694,14 +695,6 @@ void ImageBlur(Image img, int dx, int dy) { ///
   int w = img->width; int h = img->height;
   unsigned long int** cumSum = ImageCumSum(img);  
 
-  // for (int y = 0; y < h; y++) {  
-  //   for (int x = 0; x < w; x++) {
-  //     printf("%15ld ",cumSum[x][y]);
-  //   } 
-  //   printf("\n");
-  // }
-  // printf("\n");
-
   // Mean calculator
   unsigned int divisor;
   double mean;
@@ -710,40 +703,26 @@ void ImageBlur(Image img, int dx, int dy) { ///
 
   for (int x = 0; x < w; x++) {
     for (int y = 0; y < h; y++) {
+      rx = (x + dx >= w) ? w - 1 : x + dx;
+      by = (y + dy >= h) ? h - 1 : y + dy;
+      lx = (x - dx < 0) ? 0 : x - dx;
+      ty = (y - dy < 0) ? 0 : y - dy;
 
-      rx = x+dx; if (rx >= w) rx = w-1;
-      by = y+dy; if (by >= h) by = h-1;
-
-      lx = x-(dx+1); 
-      if (lx < 0) {
-        l_bottom = 0;
-        lx = 0;
-      } else l_bottom = cumSum[lx][by];
-      ty = y-(dy+1); 
-      if (ty < 0) {
-        l_top = 0;
-        ty = 0;
-      } else l_top = cumSum[lx][ty];
-
-      r_bottom = cumSum[rx][by];        
-      r_top = cumSum[rx][ty];
-
-      divisor = (rx-lx) * (by-ty);
-
-      mean = (double)((r_bottom-l_bottom) - (r_top-l_top)) / (double)divisor;
+      r_bottom = cumSum[rx][by]; // to: increment total sums
       
-      printf("rx=%d, lx=%d, ty=%d, by=%d\n",rx,lx,ty,by);
-      printf("%d\n",divisor);
+      l_bottom = (lx == 0) ? 0 : cumSum[lx-1][by]; // to: decrement left sums
+      r_top = (ty == 0) ? 0 : cumSum[rx][ty-1]; // to: decrement top sums
+
+      l_top = (lx == 0 || ty == 0) ? 0 : cumSum[lx-1][ty-1]; // to: increment top left sums (compensate)
+
+
+      divisor = (rx-lx+1) * (by-ty+1);
+
+      mean = (double)(r_bottom - l_bottom - r_top + l_top) / divisor;
+
       ImageSetPixel(img,x,y,(int)(mean + 0.5));
     }
   }
-
-// for (int y = 2; y < h-1; y++) {  
-//     for (int x = 2; x < w-1; x++) {
-//       printf("%15d ",total[x][y]);
-//     } 
-//     printf("\n");
-//   }
 
   // Free cum sum
   for (unsigned i = 0; i < img->width; i++) free(cumSum[i]);
