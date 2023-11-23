@@ -642,6 +642,47 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   return 0;
 }
 
+// Cum sum, function used in ImageBlur()
+static unsigned long int** ImageCumSum(Image img) {
+
+  // Allocation
+  unsigned long int** cumSum = (unsigned long int**) malloc(img->width * sizeof(unsigned long int*));
+  if (cumSum == NULL) { // Allocation fail!
+    errno = ENOMEM; // Error: no memory
+    return NULL;
+  }
+  for (size_t i = 0; i < img->width; i++) {
+    cumSum[i] = malloc(img->height * sizeof(unsigned long int));
+    if(cumSum[i] == NULL) {// Allocation fail!
+      for (size_t j = i-1 ; j >= 0; j--) free(cumSum[j]);
+      errno = ENOMEM; // Error: no memory
+      return NULL;
+    }
+  }
+
+  unsigned long int present;
+
+  // Era possivel misturar
+  // Cumulative sums Ox
+  for (size_t y = 0; y < img->height; y++) {
+    present = 0;
+    for (size_t x = 0; x < img->width; x++) {   
+      present += ImageGetPixel(img, x, y);
+      cumSum[x][y] = present;
+    } 
+  }
+  // Cumulative sums Oy
+  for (size_t x = 0; x < img->width; x++) {
+    present = 0;
+    for (size_t y = 0; y < img->height; y++) {   
+      present += cumSum[x][y];
+      cumSum[x][y] = present;
+    } 
+  }
+
+  return cumSum;
+}
+
 /// Filtering
 
 /// Blur an image by a applying a (2dx+1)x(2dy+1) mean filter.
@@ -651,40 +692,51 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
 void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
   int w = img->width; int h = img->height;
-  int cumSum[w][h];
-  int total[w][h];
-  int present;  
-  // Cumulative sums Ox
-  for (int y = 0; y < h; y++) {
-    present = 0;
-    for (int x = 0; x < w; x++) {   
-      present += ImageGetPixel(img, x, y);
-      cumSum[x][y] = present;
-    } 
-  }
-  // // Cumulative sums Oy
-  for (int x = 0; x < w; x++) {
-    present = 0;
-    for (int y = 0; y < h; y++) {   
-      present += cumSum[x][y];
-      cumSum[x][y] = present;
-    } 
-  }
+  unsigned long int** cumSum = ImageCumSum(img);  
 
   // for (int y = 0; y < h; y++) {  
   //   for (int x = 0; x < w; x++) {
-  //     printf("%15d ",cumSum[x][y]);
+  //     printf("%15ld ",cumSum[x][y]);
   //   } 
   //   printf("\n");
   // }
   // printf("\n");
-  // Average
-  int num = (2 * dx + 1) * (2 * dy + 1);
-    for (int x = dx; x < w - dx; x++) {
-        for (int y = dy; y < h - dy; y++) {
-            total[x][y] = (cumSum[x+1][y+1] - cumSum[x-dx][y+1] - cumSum[x+1][y-dy] + cumSum[x-dx][y-dy]) / num;
-        }
+
+  // Mean calculator
+  unsigned int divisor;
+  double mean;
+  int rx, lx, by, ty;
+  unsigned long int l_bottom, r_bottom, l_top, r_top;
+
+  for (int x = 0; x < w; x++) {
+    for (int y = 0; y < h; y++) {
+
+      rx = x+dx; if (rx >= w) rx = w-1;
+      by = y+dy; if (by >= h) by = h-1;
+
+      lx = x-(dx+1); 
+      if (lx < 0) {
+        l_bottom = 0;
+        lx = 0;
+      } else l_bottom = cumSum[lx][by];
+      ty = y-(dy+1); 
+      if (ty < 0) {
+        l_top = 0;
+        ty = 0;
+      } else l_top = cumSum[lx][ty];
+
+      r_bottom = cumSum[rx][by];        
+      r_top = cumSum[rx][ty];
+
+      divisor = (rx-lx) * (by-ty);
+
+      mean = (double)((r_bottom-l_bottom) - (r_top-l_top)) / (double)divisor;
+      
+      printf("rx=%d, lx=%d, ty=%d, by=%d\n",rx,lx,ty,by);
+      printf("%d\n",divisor);
+      ImageSetPixel(img,x,y,(int)(mean + 0.5));
     }
+  }
 
 // for (int y = 2; y < h-1; y++) {  
 //     for (int x = 2; x < w-1; x++) {
@@ -692,6 +744,10 @@ void ImageBlur(Image img, int dx, int dy) { ///
 //     } 
 //     printf("\n");
 //   }
+
+  // Free cum sum
+  for (unsigned i = 0; i < img->width; i++) free(cumSum[i]);
+  free(cumSum);
 
 }
 
