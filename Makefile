@@ -7,7 +7,7 @@
 
 CFLAGS = -Wall -O2 -g
 
-PROGS = imageTool imageTest
+PROGS = imageTool imageTest imageTestBlur
 
 TESTS = test1 test2 test3 test4 test5 test6 test7 test8 test9
 
@@ -15,6 +15,8 @@ TESTS = test1 test2 test3 test4 test5 test6 test7 test8 test9
 all: $(PROGS)
 
 imageTest: imageTest.o image8bit.o instrumentation.o error.o
+
+imageTestBlur: imageTestBlur.o image8bit.o instrumentation.o error.o
 
 imageTest.o: image8bit.h instrumentation.h
 

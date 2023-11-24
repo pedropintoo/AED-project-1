@@ -10,11 +10,10 @@
 /// 2013, 2023
 
 // Student authors (fill in below):
-// NMec:  Name:
+// NMec: 115304 Name: Pedro Miguel Azevedo Pinto
+// NMec: 104384 Name: João Pedro Azevedo Pinto
 // 
-// 
-// 
-// Date:
+// Date: 24-11-2023
 //
 
 #include "image8bit.h"
@@ -147,7 +146,6 @@ void ImageInit(void) { ///
   InstrCalibrate();
   InstrName[0] = "pixmem";  // InstrCount[0] will count pixel array acesses
   // Name other counters here...
-//  InstrPrint();
 }
 
 // Macros to simplify accessing instrumentation counters:
@@ -190,7 +188,7 @@ Image ImageCreate(int width, int height, uint8 maxval) { ///
   img->width = width;
   img->height = height;
   img->maxval = maxval;
-
+ 
   return img;
 
 }
@@ -653,6 +651,7 @@ static unsigned long int** ImageCumSum(Image img) {
   }
   for (size_t i = 0; i < img->width; i++) {
     cumSum[i] = malloc(img->height * sizeof(unsigned long int));
+    PIXMEM += 1;  // count one pixel access (write)
     if(cumSum[i] == NULL) {// Allocation fail!
       for (size_t j = 0 ; j < i; j++) free(cumSum[j]);
       errno = ENOMEM; // Error: no memory
@@ -668,8 +667,9 @@ static unsigned long int** ImageCumSum(Image img) {
   for (size_t y = 0; y < img->height; y++) {
     present = 0;
     for (size_t x = 0; x < img->width; x++) {   
-      present += ImageGetPixel(img, x, y);
+      present += ImageGetPixel(img, x, y); // already count PIXMEM
       cumSum[x][y] = present;
+      PIXMEM += 1;  // count one pixel access (write)
     } 
   }
   // Cumulative sums Oy
@@ -678,6 +678,7 @@ static unsigned long int** ImageCumSum(Image img) {
     for (size_t y = 0; y < img->height; y++) {   
       present += cumSum[x][y];
       cumSum[x][y] = present;
+      PIXMEM += 2;  // count one pixel access (read + write)
     } 
   }
 
@@ -711,12 +712,10 @@ void ImageBlur(Image img, int dx, int dy) { ///
       ty = (y - dy < 0) ? 0 : y - dy;
 
       r_bottom = cumSum[rx][by]; // to: increment total sums
-      
       r_top = (ty == 0) ? 0 : cumSum[rx][ty-1]; // to: decrement top sums
-
       l_bottom = (lx == 0) ? 0 : cumSum[lx-1][by]; // to: decrement left sums
       l_top = (lx == 0 || ty == 0) ? 0 : cumSum[lx-1][ty-1]; // to: increment top left sums (compensate)
-
+      PIXMEM += 4;  // count one pixel access (read)
 
       divisor = (rx-lx+1) * (by-ty+1);
 
