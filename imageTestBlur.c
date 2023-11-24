@@ -18,19 +18,28 @@
 #include "image8bit.h"
 #include "instrumentation.h"
 
-#define BLUR_DX 5
-#define BLUR_DY 5
+#define BLUR_DX 100
+#define BLUR_DY 100
+
+#define BUFFER_STRING 50
 
 int main(int argc, char* argv[]) {
 
   ImageInit();
   
   // printf("# LOAD image");
-  InstrReset(); // to reset instrumentation
-  Image img = ImageLoad("testBlur/img_10x10.pgm");
-  ImageBlur(img, BLUR_DX, BLUR_DY);
   
-  InstrPrint(); // to print instrumentation
+  InstrPrint(1,NULL);
+  char imgPath[BUFFER_STRING];
+  for (int i = 10; i <= 1000; i+= 10) {
+    InstrReset(); // to reset instrumentation
+    sprintf(imgPath, "testBlur/pgm/img_%dx%d.pgm", i, i);
+    Image img = ImageLoad(imgPath);
+    ImageBlur(img, BLUR_DX, BLUR_DY);
+    InstrPrint(0,i*i); // to print instrumentation //
+  }
+  
+  // Janela: (4*i*(i+1)+2)
 
 
   // ImageDestroy(&img1);

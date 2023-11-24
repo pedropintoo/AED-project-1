@@ -38,51 +38,6 @@ void ImageBlur(Image img, int dx, int dy) { ///
 
 // Version 2
 
-// Cum sum, function used in ImageBlur()
-static unsigned long int** ImageCumSum(Image img) {
-
-  // Allocation
-  unsigned long int** cumSum = (unsigned long int**) malloc(img->width * sizeof(unsigned long int*));
-  if (cumSum == NULL) { // Allocation fail!
-    errno = ENOMEM; // Error: no memory
-    return NULL;
-  }
-  for (size_t i = 0; i < img->width; i++) {
-    cumSum[i] = malloc(img->height * sizeof(unsigned long int));
-    PIXMEM += 1;  // count one pixel access (write)
-    if(cumSum[i] == NULL) {// Allocation fail!
-      for (size_t j = 0 ; j < i; j++) free(cumSum[j]);
-      errno = ENOMEM; // Error: no memory
-      return NULL;
-    }
-  }
-
-  unsigned long int present;
-
-  // Era possivel misturar
-  // Comecar linha 0 e coluna 0
-  // Cumulative sums Ox
-  for (size_t y = 0; y < img->height; y++) {
-    present = 0;
-    for (size_t x = 0; x < img->width; x++) {   
-      present += ImageGetPixel(img, x, y); // already count PIXMEM
-      cumSum[x][y] = present;
-      PIXMEM += 1;  // count one pixel access (write)
-    } 
-  }
-  // Cumulative sums Oy
-  for (size_t x = 0; x < img->width; x++) {
-    present = 0;
-    for (size_t y = 0; y < img->height; y++) {   
-      present += cumSum[x][y];
-      cumSum[x][y] = present;
-      PIXMEM += 2;  // count one pixel access (read + write)
-    } 
-  }
-
-  return cumSum;
-}
-
 /// Filtering
 
 /// Blur an image by a applying a (2dx+1)x(2dy+1) mean filter.

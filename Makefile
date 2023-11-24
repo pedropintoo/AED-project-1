@@ -20,6 +20,8 @@ imageTestBlur: imageTestBlur.o image8bit.o instrumentation.o error.o
 
 imageTest.o: image8bit.h instrumentation.h
 
+imageTestBlur.o: image8bit.h instrumentation.h
+
 imageTool: imageTool.o image8bit.o instrumentation.o error.o
 
 imageTool.o: image8bit.h instrumentation.h

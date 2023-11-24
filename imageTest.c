@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
   if (img1 == NULL) {
     error(2, errno, "Loading %s: %s", argv[1], ImageErrMsg());
   }
-  InstrPrint(); // to print instrumentation
+  InstrPrint(0); // to print instrumentation
 
   // Try changing the behaviour of the program by commenting/uncommenting
   // the appropriate lines.
