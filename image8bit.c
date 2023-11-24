@@ -654,7 +654,7 @@ static unsigned long int** ImageCumSum(Image img) {
   for (size_t i = 0; i < img->width; i++) {
     cumSum[i] = malloc(img->height * sizeof(unsigned long int));
     if(cumSum[i] == NULL) {// Allocation fail!
-      for (size_t j = i-1 ; j >= 0; j--) free(cumSum[j]);
+      for (size_t j = 0 ; j < i; j++) free(cumSum[j]);
       errno = ENOMEM; // Error: no memory
       return NULL;
     }
@@ -693,6 +693,8 @@ static unsigned long int** ImageCumSum(Image img) {
 void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
   int w = img->width; int h = img->height;
+
+  // Calculate cumulative sum for the entire image
   unsigned long int** cumSum = ImageCumSum(img);  
 
   // Mean calculator
@@ -710,9 +712,9 @@ void ImageBlur(Image img, int dx, int dy) { ///
 
       r_bottom = cumSum[rx][by]; // to: increment total sums
       
-      l_bottom = (lx == 0) ? 0 : cumSum[lx-1][by]; // to: decrement left sums
       r_top = (ty == 0) ? 0 : cumSum[rx][ty-1]; // to: decrement top sums
 
+      l_bottom = (lx == 0) ? 0 : cumSum[lx-1][by]; // to: decrement left sums
       l_top = (lx == 0 || ty == 0) ? 0 : cumSum[lx-1][ty-1]; // to: increment top left sums (compensate)
 
 
