@@ -21,29 +21,27 @@
 #define BLUR_DX 100
 #define BLUR_DY 100
 
-#define BUFFER_STRING 50
+#define MAX_VAL 255
 
 int main(int argc, char* argv[]) {
 
   ImageInit();
-  
-  // printf("# LOAD image");
-  
-  InstrPrint(1,NULL);
-  char imgPath[BUFFER_STRING];
-  for (int i = 10; i <= 1000; i+= 10) {
+
+  // InstrPrint(1,NULL); // header
+  for (int i = atoi(argv[1]); i <= atoi(argv[3]); i+= atoi(argv[2])) {
+    Image img = ImageCreate(i,i,MAX_VAL);
     InstrReset(); // to reset instrumentation
-    sprintf(imgPath, "testBlur/pgm/img_%dx%d.pgm", i, i);
-    Image img = ImageLoad(imgPath);
     ImageBlur(img, BLUR_DX, BLUR_DY);
     InstrPrint(0,i*i); // to print instrumentation //
+    InstrReset(); // to reset instrumentation
+    ImageBlur2(img, BLUR_DX, BLUR_DY);
+    InstrPrint(0,i*i); // to print instrumentation //
+    ImageDestroy(&img);
   }
   
+
   // Janela: (4*i*(i+1)+2)
 
-
-  // ImageDestroy(&img1);
-  // ImageDestroy(&img2);
   return 0;
 }
 

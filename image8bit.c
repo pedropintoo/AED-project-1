@@ -692,9 +692,8 @@ static unsigned long int** ImageCumSum(Image img) {
 /// [x-dx, x+dx]x[y-dy, y+dy].
 /// The image is changed in-place.
 
-#if 1 // Version 2 - ImageBlur()
-
-void ImageBlur(Image img, int dx, int dy) { ///
+// Version 2 - ImageBlur()
+void ImageBlur2(Image img, int dx, int dy) { ///
   // Insert your code here!
   int w = img->width; int h = img->height;
 
@@ -734,7 +733,7 @@ void ImageBlur(Image img, int dx, int dy) { ///
 
 }
 
-#else // Version 1 - ImageBlur()
+// Version 1 - ImageBlur()
 
 void ImageBlur(Image img, int dx, int dy) { ///
   // Insert your code here!
@@ -761,9 +760,11 @@ void ImageBlur(Image img, int dx, int dy) { ///
   }
 
   // copy the image
-  for(size_t idx = 0; idx < h*w; idx++) img->pixel[idx] = blurImg->pixel[idx];
+  for(size_t idx = 0; idx < h*w; idx++) {
+    img->pixel[idx] = blurImg->pixel[idx];
+    PIXMEM++;
+  }
 
   ImageDestroy(&blurImg);
 }
 
-#endif

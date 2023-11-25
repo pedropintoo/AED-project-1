@@ -123,11 +123,16 @@ void InstrPrint(int header, int nPixels) { ///
         printf("\t%-15.15s", InstrName[i]);
     puts("");
   } else {
-  printf("%-15d\t%-15.6f\t%-15.6f",nPixels , time, caltime);
+  printf("%d\t%f\t%f",nPixels , time, caltime);
   for (int i = 0; i < NUMCOUNTERS; i++)
     if (InstrName[i] != NULL)
-      printf("\t%-15lu", InstrCount[i]);  
+      printf("\t%lu", InstrCount[i]);  
   puts("");
   }
 }
 
+// printf("%-15d\t%-15.6f\t%-15.6f",nPixels , time, caltime);
+  // for (int i = 0; i < NUMCOUNTERS; i++)
+  //   if (InstrName[i] != NULL)
+  //     printf("\t%-15lu", InstrCount[i]);  
+  // puts("");
