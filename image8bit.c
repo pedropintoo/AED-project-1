@@ -746,22 +746,34 @@ void ImageBlur2(Image img, int dx, int dy) { ///
       r_bottom = cumSum[rx][by]; // to: increment total sums
       r_top = (ty == 0) ? 0 : cumSum[rx][ty-1]; // to: decrement top sums
       l_bottom = (lx == 0) ? 0 : cumSum[lx-1][by]; // to: decrement left sums
+      PIXMEM += 3;
       COMPARISONS+= 2;
-      COMPARISONS++;
-      if (lx == 0) l_top = 0;
-      else {
-        COMPARISONS++;
-        if (ty == 0) l_top = 0;
-        else l_top = cumSum[lx-1][ty-1]; // to: increment top left sums (compensate)
-      }
-      // l_top = (lx == 0 || ty == 0) ? 0 : cumSum[lx-1][ty-1]; // to: increment top left sums (compensate)
-      PIXMEM += 4;  // count one pixel access (read)
-
       
-      divisor = (rx-lx+1) * (by-ty+1);
+      // More complex, but we gain 1 OPERATION...
+      COMPARISONS++;
+      if (lx == 0) {
+        divisor = (rx-lx+1) * (by-ty+1);
 
-      OPERATIONS += 3;
-      mean = (double)(r_bottom - l_bottom - r_top + l_top) / divisor;
+        OPERATIONS += 2;
+        mean = (double)(r_bottom - l_bottom - r_top) / divisor; // l_top = 0 -> -1 OPERATIONS
+
+      } else {
+        COMPARISONS++;
+        if (ty == 0) {
+          divisor = (rx-lx+1) * (by-ty+1);
+
+          OPERATIONS += 2;
+          mean = (double)(r_bottom - l_bottom - r_top) / divisor; // l_top = 0 -> -1 OPERATIONS
+
+        } else {
+          l_top = cumSum[lx-1][ty-1]; // to: increment top left sums (compensate)
+          PIXMEM++;
+
+          divisor = (rx-lx+1) * (by-ty+1);
+          OPERATIONS += 3;
+          mean = (double)(r_bottom - l_bottom - r_top + l_top) / divisor;
+        }
+      }
 
       ImageSetPixel(img,x,y,(int)(mean + 0.5));
     }
