@@ -686,6 +686,7 @@ static unsigned long int** ImageCumSum(Image img) {
     COMPARISONS++;
     for (size_t x = 0; x < img->width; x++) {   
       COMPARISONS++;
+      OPERATIONS++;
       present += ImageGetPixel(img, x, y); // already count PIXMEM
       cumSum[x][y] = present;
       PIXMEM += 1;  // count one pixel access (write)
@@ -699,6 +700,7 @@ static unsigned long int** ImageCumSum(Image img) {
     COMPARISONS++;
     for (size_t y = 0; y < img->height; y++) {   
       COMPARISONS++;
+      OPERATIONS++;
       present += cumSum[x][y];
       cumSum[x][y] = present;
       PIXMEM += 2;  // count one pixel access (read + write)
@@ -755,9 +757,10 @@ void ImageBlur2(Image img, int dx, int dy) { ///
       // l_top = (lx == 0 || ty == 0) ? 0 : cumSum[lx-1][ty-1]; // to: increment top left sums (compensate)
       PIXMEM += 4;  // count one pixel access (read)
 
-      OPERATIONS+= ;
+      
       divisor = (rx-lx+1) * (by-ty+1);
 
+      OPERATIONS += 3;
       mean = (double)(r_bottom - l_bottom - r_top + l_top) / divisor;
 
       ImageSetPixel(img,x,y,(int)(mean + 0.5));
@@ -799,6 +802,7 @@ void ImageBlur(Image img, int dx, int dy) { ///
           COMPARISONS++;
           COMPARISONS++;
           if (ImageValidPos(img,x+px,y+py)) {
+            OPERATIONS++;
             sum += ImageGetPixel(img,x+px,y+py);
             count++;
           }
