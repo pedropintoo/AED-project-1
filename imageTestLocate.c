@@ -26,23 +26,54 @@ int main(int argc, char* argv[]) {
   ImageInit();
   Image whitePixel = ImageCreate(1,1,MAX_VAL);
   ImageNegative(whitePixel);
-
+  Image img2 = ImageCreate(atoi(argv[2]),atoi(argv[2]),MAX_VAL);
+  int x = 0;
+  int y = 0;
   if (atoi(argv[1]) == 0) { // Worst Case found
-    Image img2 = ImageCreate(atoi(argv[2]),atoi(argv[2]),MAX_VAL);
     ImagePaste(img2,atoi(argv[2])-1,atoi(argv[2])-1,whitePixel);
     
     for (int i = atoi(argv[3]); i <= atoi(argv[5]); i+= atoi(argv[4])) {
       Image img1 = ImageCreate(i,i,MAX_VAL);
-      
+      ImagePaste(img1,i-1,i-1,whitePixel);
       InstrReset(); // to reset instrumentation
-      ImageLocateSubImage(img1,NULL,NULL,img2);
+      ImageLocateSubImage(img1,&x,&y,img2);
       InstrPrintTest(i*i); // Version 1 print
       ImageDestroy(&img1);
     }
-    // ImageDestroy(&img2);
+    
+  }else if (atoi(argv[1]) == 1) { // Worst Case not found
+    ImagePaste(img2,atoi(argv[2])-1,atoi(argv[2])-1,whitePixel);
+    
+    for (int i = atoi(argv[3]); i <= atoi(argv[5]); i+= atoi(argv[4])) {
+      Image img1 = ImageCreate(i,i,MAX_VAL);
+      InstrReset(); // to reset instrumentation
+      ImageLocateSubImage(img1,&x,&y,img2);
+      InstrPrintTest(i*i); // Version 1 print
+      ImageDestroy(&img1);
+    }
+  }else if (atoi(argv[1]) == 2) { // Best Case found
+    
+    for (int i = atoi(argv[3]); i <= atoi(argv[5]); i+= atoi(argv[4])) {
+      Image img1 = ImageCreate(i,i,MAX_VAL);
+      InstrReset(); // to reset instrumentation
+      ImageLocateSubImage(img1,&x,&y,img2);
+      InstrPrintTest(i*i); // Version 1 print
+      ImageDestroy(&img1);
+    }
+  } else { // Best Case not found
+    ImageNegative(img2); // all white
+    
+    for (int i = atoi(argv[3]); i <= atoi(argv[5]); i+= atoi(argv[4])) {
+      Image img1 = ImageCreate(i,i,MAX_VAL);
+      InstrReset(); // to reset instrumentation
+      ImageLocateSubImage(img1,&x,&y,img2);
+      InstrPrintTest(i*i); // Version 1 print
+      ImageDestroy(&img1);
+    }
   }
 
-  // ImageDestroy(&whitePixel);
+  ImageDestroy(&img2);
+  ImageDestroy(&whitePixel);
 
 
   return 0;

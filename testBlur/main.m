@@ -51,7 +51,7 @@ end
 
 
 file = fopen("data_blurTests.txt","r");
-formatSpec = '%d %f %f %d %d %d';
+formatSpec = '%d %f %f %d %d %d %d';
 data = textscan(file, formatSpec);
 fclose(file);
 
@@ -61,6 +61,7 @@ caltimeArray = double(data{3});
 PIXMEMArray = double(data{4}); % 2
 COMPARISONSArray = double(data{5}); % 3
 OPERATIONSArray = double(data{6}); % 4
+COMPARISONS_2Array = double(data{6}); % nao
 
 
 %% Tempo de execucao em funcao de n
