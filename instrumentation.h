@@ -48,7 +48,9 @@ void InstrCalibrate(void) ;
 /// Reset counters to zero and store cpu_time.
 void InstrReset(void) ;
 
-void InstrPrint(int header, int nPixels) ;
+void InstrPrint(void) ;
+// For tests...
+void InstrPrintTest(int nPixels) ;
 
 #endif
 

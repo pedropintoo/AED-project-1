@@ -18,8 +18,8 @@
 #include "image8bit.h"
 #include "instrumentation.h"
 
-#define BLUR_DX 100
-#define BLUR_DY 100
+#define BLUR_DX 2
+#define BLUR_DY 2
 
 #define MAX_VAL 255
 
@@ -32,10 +32,10 @@ int main(int argc, char* argv[]) {
     Image img = ImageCreate(i,i,MAX_VAL);
     InstrReset(); // to reset instrumentation
     ImageBlur(img, BLUR_DX, BLUR_DY);
-    InstrPrint(0,i*i); // to print instrumentation //
+    InstrPrintTest(i*i); // to print instrumentation //
     InstrReset(); // to reset instrumentation
     ImageBlur2(img, BLUR_DX, BLUR_DY);
-    InstrPrint(0,i*i); // to print instrumentation //
+    InstrPrintTest(i*i); // to print instrumentation //
     ImageDestroy(&img);
   }
   

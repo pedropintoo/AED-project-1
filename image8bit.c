@@ -144,13 +144,17 @@ static int check(int condition, const char* failmsg) {
 /// Currently, simply calibrate instrumentation and set names of counters.
 void ImageInit(void) { ///
   InstrCalibrate();
+  // Name counters here...
   InstrName[0] = "pixmem";  // InstrCount[0] will count pixel array acesses
-  // Name other counters here...
+  InstrName[1] = "comparisons";
+  InstrName[2] = "operations";
 }
 
 // Macros to simplify accessing instrumentation counters:
+// Add macros here...
 #define PIXMEM InstrCount[0]
-// Add more macros here...
+#define COMPARISONS InstrCount[1]
+#define OPERATIONS InstrCount[2]
 
 // TIP: Search for PIXMEM or InstrCount to see where it is incremented!
 
@@ -343,7 +347,16 @@ void ImageStats(Image img, uint8* min, uint8* max) { ///
 /// Check if pixel position (x,y) is inside img.
 int ImageValidPos(Image img, int x, int y) { ///
   assert (img != NULL);
-  return (0 <= x && x < img->width) && (0 <= y && y < img->height);
+  COMPARISONS++;
+  if (0 > x) return 0;
+  COMPARISONS++;
+  if (x >= img->width) return 0;
+  COMPARISONS++;
+  if (0 > y) return 0;
+  COMPARISONS++;
+  if (y >= img->height) return 0;
+  return 1;
+  // return (0 <= x && x < img->width) && (0 <= y && y < img->height);
 }
 
 /// Check if rectangular area (x,y,w,h) is completely inside img.
@@ -649,7 +662,9 @@ static unsigned long int** ImageCumSum(Image img) {
     errno = ENOMEM; // Error: no memory
     return NULL;
   }
+  COMPARISONS++;
   for (size_t i = 0; i < img->width; i++) {
+    COMPARISONS++;
     cumSum[i] = malloc(img->height * sizeof(unsigned long int));
     PIXMEM += 1;  // count one pixel access (write)
     if(cumSum[i] == NULL) {// Allocation fail!
@@ -664,18 +679,26 @@ static unsigned long int** ImageCumSum(Image img) {
   // Era possivel misturar
   // Comecar linha 0 e coluna 0
   // Cumulative sums Ox
+  COMPARISONS++;
   for (size_t y = 0; y < img->height; y++) {
+    COMPARISONS++;
     present = 0;
+    COMPARISONS++;
     for (size_t x = 0; x < img->width; x++) {   
+      COMPARISONS++;
       present += ImageGetPixel(img, x, y); // already count PIXMEM
       cumSum[x][y] = present;
       PIXMEM += 1;  // count one pixel access (write)
     } 
   }
   // Cumulative sums Oy
+  COMPARISONS++;
   for (size_t x = 0; x < img->width; x++) {
+    COMPARISONS++;
     present = 0;
+    COMPARISONS++;
     for (size_t y = 0; y < img->height; y++) {   
+      COMPARISONS++;
       present += cumSum[x][y];
       cumSum[x][y] = present;
       PIXMEM += 2;  // count one pixel access (read + write)
@@ -706,19 +729,33 @@ void ImageBlur2(Image img, int dx, int dy) { ///
   int rx, lx, by, ty;
   unsigned long int l_bottom, r_bottom, l_top, r_top;
 
+  COMPARISONS++;
   for (int x = 0; x < w; x++) {
+    COMPARISONS++;
+    COMPARISONS++;
     for (int y = 0; y < h; y++) {
+      COMPARISONS++;
       rx = (x + dx >= w) ? w - 1 : x + dx;
       by = (y + dy >= h) ? h - 1 : y + dy;
       lx = (x - dx < 0) ? 0 : x - dx;
       ty = (y - dy < 0) ? 0 : y - dy;
+      COMPARISONS+= 4;
 
       r_bottom = cumSum[rx][by]; // to: increment total sums
       r_top = (ty == 0) ? 0 : cumSum[rx][ty-1]; // to: decrement top sums
       l_bottom = (lx == 0) ? 0 : cumSum[lx-1][by]; // to: decrement left sums
-      l_top = (lx == 0 || ty == 0) ? 0 : cumSum[lx-1][ty-1]; // to: increment top left sums (compensate)
+      COMPARISONS+= 2;
+      COMPARISONS++;
+      if (lx == 0) l_top = 0;
+      else {
+        COMPARISONS++;
+        if (ty == 0) l_top = 0;
+        else l_top = cumSum[lx-1][ty-1]; // to: increment top left sums (compensate)
+      }
+      // l_top = (lx == 0 || ty == 0) ? 0 : cumSum[lx-1][ty-1]; // to: increment top left sums (compensate)
       PIXMEM += 4;  // count one pixel access (read)
 
+      OPERATIONS+= ;
       divisor = (rx-lx+1) * (by-ty+1);
 
       mean = (double)(r_bottom - l_bottom - r_top + l_top) / divisor;
@@ -728,7 +765,11 @@ void ImageBlur2(Image img, int dx, int dy) { ///
   }
 
   // Free cum sum
-  for (unsigned i = 0; i < img->width; i++) free(cumSum[i]);
+  COMPARISONS++;
+  for (unsigned i = 0; i < img->width; i++) {
+    COMPARISONS++;
+    free(cumSum[i]);
+  }
   free(cumSum);
 
 }
@@ -743,12 +784,20 @@ void ImageBlur(Image img, int dx, int dy) { ///
 
   int sum, count;
 
+  COMPARISONS++; // first
   for (int x = 0; x < w; x++) {
+    COMPARISONS++; // all + last
+    COMPARISONS++;
     for (int y = 0; y < h; y++) {
+      COMPARISONS++; 
       sum = 0; count = 0;
+      COMPARISONS++;
       for(int px = -dx; px <= dx; px++) {
+        COMPARISONS++;
+        COMPARISONS++;
         for (int py = -dy; py <= dy; py++) {
-          
+          COMPARISONS++;
+          COMPARISONS++;
           if (ImageValidPos(img,x+px,y+py)) {
             sum += ImageGetPixel(img,x+px,y+py);
             count++;
@@ -760,7 +809,9 @@ void ImageBlur(Image img, int dx, int dy) { ///
   }
 
   // copy the image
+  COMPARISONS++;
   for(size_t idx = 0; idx < h*w; idx++) {
+    COMPARISONS++;
     img->pixel[idx] = blurImg->pixel[idx];
     PIXMEM++;
   }
