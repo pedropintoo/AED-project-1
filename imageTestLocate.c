@@ -28,52 +28,17 @@ int main(int argc, char* argv[]) {
   ImageNegative(whitePixel);
 
   if (atoi(argv[1]) == 0) { // Worst Case found
-    Image img2 = ImageCreate(atoi(argv[1]),atoi(argv[1]),MAX_VAL);
-    for (int i = atoi(argv[2]); i <= atoi(argv[4]); i+= atoi(argv[3])) {
+    Image img2 = ImageCreate(atoi(argv[2]),atoi(argv[2]),MAX_VAL);
+    ImagePaste(img2,atoi(argv[2])-1,atoi(argv[2])-1,whitePixel);
+
+    for (int i = atoi(argv[3]); i <= atoi(argv[5]); i+= atoi(argv[4])) {
       Image img1 = ImageCreate(i,i,MAX_VAL);
       InstrReset(); // to reset instrumentation
       ImageLocateSubImage(img1,NULL,NULL,img2);
       InstrPrintTest(i*i); // Version 1 print
       ImageDestroy(&img1);
     }
-    ImageDestroy(&img2)
-
-  } else if (atoi(argv[1]) == 1) { // Worst Case not found
-    const int BLUR_DX = atoi(argv[4]);
-    const int BLUR_DY = atoi(argv[5]);
-
-    // InstrPrint(1,NULL); // header
-    for (int i = atoi(argv[1]); i <= atoi(argv[3]); i+= atoi(argv[2])) {
-      Image img = ImageCreate(i,i,MAX_VAL);
-      InstrReset(); // to reset instrumentation
-      ImageLocateSubImage(img, BLUR_DX, BLUR_DY);
-      InstrPrintTest(i*i); // Version 1 print
-      ImageDestroy(&img);
-    }
-  } else if (atoi(argv[1]) == 2) { // Best Case found
-    const int BLUR_DX = atoi(argv[4]);
-    const int BLUR_DY = atoi(argv[5]);
-
-    // InstrPrint(1,NULL); // header
-    for (int i = atoi(argv[1]); i <= atoi(argv[3]); i+= atoi(argv[2])) {
-      Image img = ImageCreate(i,i,MAX_VAL);
-      InstrReset(); // to reset instrumentation
-      ImageLocateSubImage(img, BLUR_DX, BLUR_DY);
-      InstrPrintTest(i*i); // Version 1 print
-      ImageDestroy(&img);
-    }
-  } else if (atoi(argv[1]) == 3) { // Best Case not found
-    const int BLUR_DX = atoi(argv[4]);
-    const int BLUR_DY = atoi(argv[5]);
-
-    // InstrPrint(1,NULL); // header
-    for (int i = atoi(argv[1]); i <= atoi(argv[3]); i+= atoi(argv[2])) {
-      Image img = ImageCreate(i,i,MAX_VAL);
-      InstrReset(); // to reset instrumentation
-      ImageLocateSubImage(img, BLUR_DX, BLUR_DY);
-      InstrPrintTest(i*i); // Version 1 print
-      ImageDestroy(&img);
-    }
+    ImageDestroy(&img2);
   }
 
   ImageDestroy(&whitePixel);

@@ -148,6 +148,7 @@ void ImageInit(void) { ///
   InstrName[0] = "pixmem";  // InstrCount[0] will count pixel array acesses
   InstrName[1] = "comparisons";
   InstrName[2] = "operations";
+  InstrName[3] = "comparisons_2";
 }
 
 // Macros to simplify accessing instrumentation counters:
@@ -155,6 +156,7 @@ void ImageInit(void) { ///
 #define PIXMEM InstrCount[0]
 #define COMPARISONS InstrCount[1]
 #define OPERATIONS InstrCount[2]
+#define COMPARISONS_2 InstrCount[3]
 
 // TIP: Search for PIXMEM or InstrCount to see where it is incremented!
 
@@ -619,9 +621,9 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
   assert (img2 != NULL);
   assert (ImageValidPos(img1, x, y));
   // Insert your code here!
-
   for (int i = 0; i < img2->width; i++) {
     for (int j = 0; j < img2->height; j++) {
+      COMPARISONS_2++;
       if(ImageGetPixel(img1,x+i,y+j) != ImageGetPixel(img2,i,j) ) return 0;
     }
   }
@@ -640,11 +642,14 @@ int ImageLocateSubImage(Image img1, int* px, int* py, Image img2) { ///
   assert (img2 != NULL);
   // Insert your code here!
 
+
   for( int x=0; x <= img1->width - img2->width; x++) {
     for( int y=0; y <= img1->height - img2->height; y++) {
+      printf("(%d,%d)\n",x,y);
       if(ImageMatchSubImage(img1,x,y,img2)) { // Returns 1 (true) if img2 matches subimage of img1 at pos (x, y)
         *px = x;
         *py = y;
+        PIXMEM+=2;
         return 1;
       }
     }
