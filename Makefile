@@ -7,7 +7,7 @@
 
 CFLAGS = -Wall -O2 -g
 
-PROGS = imageTool imageTest imageTestBlur
+PROGS = imageTool imageTest imageTestBlur imageTestLocate
 
 TESTS = test1 test2 test3 test4 test5 test6 test7 test8 test9
 
@@ -18,9 +18,13 @@ imageTest: imageTest.o image8bit.o instrumentation.o error.o
 
 imageTestBlur: imageTestBlur.o image8bit.o instrumentation.o error.o
 
+imageTestLocate: imageTestLocate.o image8bit.o instrumentation.o error.o
+
 imageTest.o: image8bit.h instrumentation.h
 
 imageTestBlur.o: image8bit.h instrumentation.h
+
+imageTestLocate.o: image8bit.h instrumentation.h
 
 imageTool: imageTool.o image8bit.o instrumentation.o error.o
 
