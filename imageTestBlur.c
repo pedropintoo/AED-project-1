@@ -18,12 +18,12 @@
 #include "image8bit.h"
 #include "instrumentation.h"
 
-#define BLUR_DX 2
-#define BLUR_DY 2
-
 #define MAX_VAL 255
 
 int main(int argc, char* argv[]) {
+
+  const int BLUR_DX = atoi(argv[4]);
+  const int BLUR_DY = atoi(argv[5]);
 
   ImageInit();
 
