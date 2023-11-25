@@ -30,18 +30,19 @@ int main(int argc, char* argv[]) {
   if (atoi(argv[1]) == 0) { // Worst Case found
     Image img2 = ImageCreate(atoi(argv[2]),atoi(argv[2]),MAX_VAL);
     ImagePaste(img2,atoi(argv[2])-1,atoi(argv[2])-1,whitePixel);
-
+    
     for (int i = atoi(argv[3]); i <= atoi(argv[5]); i+= atoi(argv[4])) {
       Image img1 = ImageCreate(i,i,MAX_VAL);
+      
       InstrReset(); // to reset instrumentation
       ImageLocateSubImage(img1,NULL,NULL,img2);
       InstrPrintTest(i*i); // Version 1 print
       ImageDestroy(&img1);
     }
-    ImageDestroy(&img2);
+    // ImageDestroy(&img2);
   }
 
-  ImageDestroy(&whitePixel);
+  // ImageDestroy(&whitePixel);
 
 
   return 0;
