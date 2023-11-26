@@ -660,9 +660,7 @@ static unsigned long int** ImageCumSum(Image img) {
     errno = ENOMEM; // Error: no memory
     return NULL;
   }
-  COMPARISONS++;
   for (size_t i = 0; i < img->width; i++) {
-    COMPARISONS++;
     cumSum[i] = malloc(img->height * sizeof(unsigned long int));
     PIXMEM += 1;  // count one pixel access (write)
     if(cumSum[i] == NULL) {// Allocation fail!
@@ -677,11 +675,8 @@ static unsigned long int** ImageCumSum(Image img) {
   // Era possivel misturar
   // Comecar linha 0 e coluna 0
   // Cumulative sums Ox
-  COMPARISONS++;
   for (size_t y = 0; y < img->height; y++) {
-    COMPARISONS++;
     present = 0;
-    COMPARISONS++;
     for (size_t x = 0; x < img->width; x++) {   
       COMPARISONS++;
       OPERATIONS++;
@@ -691,11 +686,8 @@ static unsigned long int** ImageCumSum(Image img) {
     } 
   }
   // Cumulative sums Oy
-  COMPARISONS++;
   for (size_t x = 0; x < img->width; x++) {
-    COMPARISONS++;
     present = 0;
-    COMPARISONS++;
     for (size_t y = 0; y < img->height; y++) {   
       COMPARISONS++;
       OPERATIONS++;
