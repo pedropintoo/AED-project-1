@@ -710,7 +710,7 @@ static unsigned long int** ImageCumSum(Image img) {
 /// The image is changed in-place.
 
 // Version 2 - ImageBlur()
-void ImageBlur(Image img, int dx, int dy) { ///
+void ImageBlur2(Image img, int dx, int dy) { ///
   // Insert your code here!
   int w = img->width; int h = img->height;
 
@@ -755,3 +755,40 @@ void ImageBlur(Image img, int dx, int dy) { ///
   free(cumSum);
 
 }
+
+// Version 1 - ImageBlur()
+
+void ImageBlur(Image img, int dx, int dy) { ///
+  // Insert your code here!
+  Image blurImg = ImageCreate(img->width, img->height, img->maxval);
+
+  int w = img->width; int h = img->height;
+
+  int sum, count;
+
+  for (int x = 0; x < w; x++) {
+    for (int y = 0; y < h; y++) {
+      sum = 0; count = 0;
+      for(int px = -dx; px <= dx; px++) {
+        for (int py = -dy; py <= dy; py++) {
+          COMPARISONS++;
+          if (ImageValidPos(img,x+px,y+py)) {
+            OPERATIONS++;
+            sum += ImageGetPixel(img,x+px,y+py);
+            count++;
+          }
+        }
+      }
+      ImageSetPixel(blurImg, x, y, (int)((double)sum/(double)count + 0.5));
+    }
+  }
+
+  // copy the image
+  for(size_t idx = 0; idx < h*w; idx++) {
+    img->pixel[idx] = blurImg->pixel[idx];
+    PIXMEM++;
+  }
+
+  ImageDestroy(&blurImg);
+}
+

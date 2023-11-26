@@ -1,18 +1,18 @@
 %% Constantes a alterar.....
 
-OPTION = 1; 
+OPTION = 0; 
 % 0-> Por size (mesma janela de blur, imagem varia)
 % 1-> Por window (mesma imagem, janela de blur varia)
 
 % Size -> largura da imagem (sendo a imagem quadrada) 
 size_min = 1;
 size_inc = 1;
-size_max = 100; % w = h
+size_max = 50; % w = h
 
 % Window -> janela do blur (sendo a janela quadrada) 
 window_min = 1;
 window_inc = 1;
-window_max = 100; % dx = dy
+window_max = 60; % dx = dy
 
 onlyV2 = 1; % 1-> Graficos com apenas a versao 2 (algoritmo melhorado)
 % Podemos sobrepor no mesmo grafico utilizando os conceitos de cima

@@ -16,15 +16,15 @@ all: $(PROGS)
 
 imageTest: imageTest.o image8bit.o instrumentation.o error.o
 
-imageTestBlur: imageTestBlur.o image8bit.o instrumentation.o error.o
+imageTestBlur: imageTestBlur.o image8bitTest.o instrumentation.o error.o
 
-imageTestLocate: imageTestLocate.o image8bit.o instrumentation.o error.o
+imageTestLocate: imageTestLocate.o image8bitTest.o instrumentation.o error.o
 
 imageTest.o: image8bit.h instrumentation.h
 
-imageTestBlur.o: image8bit.h instrumentation.h
+imageTestBlur.o: image8bitTest.h instrumentation.h
 
-imageTestLocate.o: image8bit.h instrumentation.h
+imageTestLocate.o: image8bitTest.h instrumentation.h
 
 imageTool: imageTool.o image8bit.o instrumentation.o error.o
 

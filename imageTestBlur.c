@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "image8bit.h"
+#include "image8bitTest.h"
 #include "instrumentation.h"
 
 #define MAX_VAL 255

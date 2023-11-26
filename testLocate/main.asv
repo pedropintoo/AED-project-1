@@ -1,6 +1,6 @@
 %% Constantes a alterar.....
 
-OPTION = 3; 
+OPTION = 1; 
 
 % 0-> Pior caso (encontrar a imagem)
 % 1-> Pior caso (nao encontrar a imagem)
@@ -13,28 +13,28 @@ size_inc = 1;
 size_max = 100; % w = h
 
 % Size -> largura da imagem pequena (sendo a imagem quadrada) 
-size_fix = 10;
+size_fix = 60;
 
-printAll = 1;
+printAll = 0;
 
-colorV1 = "ob-";
+colorV1 = "o-";
 
 % Executar e ler dados
 % generate the file text with data
 status = system(sprintf("./execute_locateTests.sh %d %d %d %d %d %d",OPTION,size_fix,size_min,size_inc,size_max)); 
 customLabelx = "Numero de pixeis da imagem";
 if OPTION == 0
-    customLegend = sprintf("Pior caso (imagem encontranda) - s%dx%d",size_fix,size_fix);
-    path = "bySize/worstCase";
+    customLegend = sprintf("Pior caso (imagem encontrada) - s%dx%d",size_fix,size_fix);
+    path = "bySize/worstCaseFound";
 elseif OPTION == 1
-    customLegend = sprintf("Pior caso (imagem nao encontranda) - s%dx%d",size_fix,size_fix);
-    path = "bySize/worstCase";
+    customLegend = sprintf("Pior caso (imagem nao encontrada) - s%dx%d",size_fix,size_fix);
+    path = "bySize/worstCaseNotFound";
 elseif OPTION == 2
     customLegend = sprintf("Melhor caso (imagem encontrada) - s%dx%d",size_fix,size_fix);
-    path = "bySize/bestCase";
+    path = "bySize/bestCaseFound";
 elseif OPTION == 3
     customLegend = sprintf("Melhor caso (imagem nao encontrada) - s%dx%d",size_fix,size_fix);
-    path = "bySize/bestCase";
+    path = "bySize/bestCaseNotFound";
 end
 
 file = fopen("data_locateTests.txt","r");
