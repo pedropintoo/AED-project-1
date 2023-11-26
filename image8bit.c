@@ -522,11 +522,10 @@ Image ImageMirror(Image img) { ///
   if (imgM == NULL) return NULL;
 
   // Loop through all pixels and apply the mirror
-  for (size_t idx = 0; idx < m*n; idx++ ) {
-    imgM->pixel[((idx/m))*n + (m-1) - (idx%m)] = img->pixel[idx];
+  for (size_t idx = 0; idx < m * n; idx++) {
+    imgM->pixel[((idx / m) * m) + (m - 1 - (idx % m))] = img->pixel[idx];
   }
   
-
   return imgM;
 
 }

@@ -8,12 +8,12 @@ OPTION = 1;
 % 3-> Melhor caso (nao encontrar a imagem)
 
 % Size -> largura da imagem grande (sendo a imagem quadrada) 
-size_min = 100;
+size_min = 50;
 size_inc = 1;
-size_max = 200; % w = h
+size_max = 100; % w = h
 
 % Size -> largura da imagem pequena (sendo a imagem quadrada) 
-size_fix = 101;
+size_fix = 60;
 
 printAll = 0;
 
