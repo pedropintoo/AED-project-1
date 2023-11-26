@@ -1,6 +1,6 @@
 %% Constantes a alterar.....
 
-OPTION = 3; 
+OPTION = 2; 
 
 % 0-> Pior caso (encontrar a imagem)
 % 1-> Pior caso (nao encontrar a imagem)
@@ -13,22 +13,32 @@ size_inc = 1;
 size_max = 100; % w = h
 
 % Size -> largura da imagem pequena (sendo a imagem quadrada) 
-size_fix = 10;
+size_fix = 60;
 
 printAll = 1;
 
-colorV1 = "o-";
+colorV1 = "ob-";
 
 % Executar e ler dados
 % generate the file text with data
 status = system(sprintf("./execute_locateTests.sh %d %d %d %d %d %d",OPTION,size_fix,size_min,size_inc,size_max)); 
-customLegend = sprintf("s%dx%d",size_fix,size_fix);
-path = "bySize/bestCase";
 customLabelx = "Numero de pixeis da imagem";
-
+if OPTION == 0
+    customLegend = sprintf("Pior caso (imagem encontranda) - s%dx%d",size_fix,size_fix);
+    path = "bySize/worstCase";
+elseif OPTION == 1
+    customLegend = sprintf("Pior caso (imagem nao encontranda) - s%dx%d",size_fix,size_fix);
+    path = "bySize/worstCase";
+elseif OPTION == 2
+    customLegend = sprintf("Melhor caso (imagem encontrada) - s%dx%d",size_fix,size_fix);
+    path = "bySize/bestCase";
+elseif OPTION == 3
+    customLegend = sprintf("Melhor caso (imagem nao encontrada) - s%dx%d",size_fix,size_fix);
+    path = "bySize/bestCase";
+end
 
 file = fopen("data_locateTests.txt","r");
-formatSpec = '%d %f %f %d %d %d %d'; % 1 a mais !!!!!! CURRIGIR
+formatSpec = '%d %f %f %d %d %d';
 data = textscan(file, formatSpec);
 fclose(file);
 
@@ -38,7 +48,6 @@ caltimeArray = double(data{3});
 PIXMEMArray = double(data{4}); 
 COMPARISONSArray = double(data{5}); 
 OPERATIONSArray = double(data{6}); 
-COMPARISONS_2Array = double(data{7}); % este
 
 %% Tempo de execucao em funcao de n
 f1_time = figure(1);
@@ -62,7 +71,7 @@ end
 %% Numero de comparacoes em funcao de n
 f2_comparisons = figure(2);
 
-plot(nPixelsArray,COMPARISONS_2Array,colorV1,'DisplayName',sprintf("%s",customLegend));
+plot(nPixelsArray,COMPARISONSArray,colorV1,'DisplayName',sprintf("%s",customLegend));
 hold on;
 
 grid on

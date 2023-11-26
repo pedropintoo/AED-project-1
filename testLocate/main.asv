@@ -1,13 +1,14 @@
 %% Constantes a alterar.....
 
-OPTION = 1; 
+OPTION = 3; 
+
 % 0-> Pior caso (encontrar a imagem)
 % 1-> Pior caso (nao encontrar a imagem)
 % 2-> Melhor caso (encontrar a imagem)
 % 3-> Melhor caso (nao encontrar a imagem)
 
 % Size -> largura da imagem grande (sendo a imagem quadrada) 
-size_min = 1;
+size_min = 50;
 size_inc = 1;
 size_max = 100; % w = h
 
@@ -16,18 +17,28 @@ size_fix = 10;
 
 printAll = 1;
 
-colorV1 = "or-";
+colorV1 = "ob-";
 
 % Executar e ler dados
 % generate the file text with data
 status = system(sprintf("./execute_locateTests.sh %d %d %d %d %d %d",OPTION,size_fix,size_min,size_inc,size_max)); 
-customLegend = sprintf("s%dx%d",size_max,size_max);
-path = "bySize";
 customLabelx = "Numero de pixeis da imagem";
-
+if OPTION == 0
+    customLegend = sprintf("Pior caso (imagem encontranda) - s%dx%d",size_fix,size_fix);
+    path = "bySize/worstCase";
+elseif OPTION == 1
+    customLegend = sprintf("Pior caso (imagem nao encontranda) - s%dx%d",size_fix,size_fix);
+    path = "bySize/worstCase";
+elseif OPTION == 2
+    customLegend = sprintf("Melhor caso (imagem encontrada) - s%dx%d",size_fix,size_fix);
+    path = "bySize/bestCase";
+elseif OPTION == 3
+    customLegend = sprintf("Melhor caso (imagem nao encontrada) - s%dx%d",size_fix,size_fix);
+    path = "bySize/bestCase";
+end
 
 file = fopen("data_locateTests.txt","r");
-formatSpec = '%d %f %f %d %d %d %d'; % 1 a mais !!!!!! CURRIGIR
+formatSpec = '%d %f %f %d %d %d';
 data = textscan(file, formatSpec);
 fclose(file);
 
@@ -37,17 +48,15 @@ caltimeArray = double(data{3});
 PIXMEMArray = double(data{4}); 
 COMPARISONSArray = double(data{5}); 
 OPERATIONSArray = double(data{6}); 
-COMPARISONS_2Array = double(data{6}); % este
 
-
-%% Numero de comparacoes em funcao de n
+%% Tempo de execucao em funcao de n
 f1_time = figure(1);
 
-plot(nPixelsArray,timeArray,colorV1,'DisplayName',sprintf("Versao 1 - %s",customLegend));
+plot(nPixelsArray,timeArray,colorV1,'DisplayName',sprintf("%s",customLegend));
 hold on;
 
 grid on
-title("Numero de comparacoes em funcao de n")
+title("Tempo de execucao em funcao de n")
 xlabel(customLabelx)
 ylabel("Tempo de execucao (segundos)")
 legend
@@ -56,5 +65,24 @@ if printAll
   f1_time.PaperType='A4';
   f1_time.PaperOrientation='landscape';
   f1_time.PaperUnits='points';
+  print(sprintf("%s/time/time_S%dx%d_s%dx%d.pdf",path,size_max,size_max,size_fix,size_fix),'-dpdf','-noui','-fillpage');
+end
+
+%% Numero de comparacoes em funcao de n
+f2_comparisons = figure(2);
+
+plot(nPixelsArray,COMPARISONSArray,colorV1,'DisplayName',sprintf("%s",customLegend));
+hold on;
+
+grid on
+title("Numero de comparacoes em funcao de n")
+xlabel(customLabelx)
+ylabel("Numero de comparacoes (COMPARISONS)")
+legend
+
+if printAll
+  f2_comparisons.PaperType='A4';
+  f2_comparisons.PaperOrientation='landscape';
+  f2_comparisons.PaperUnits='points';
   print(sprintf("%s/comparisons/comparisons_S%dx%d_s%dx%d.pdf",path,size_max,size_max,size_fix,size_fix),'-dpdf','-noui','-fillpage');
 end

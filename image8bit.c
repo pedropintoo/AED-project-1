@@ -148,7 +148,6 @@ void ImageInit(void) { ///
   InstrName[0] = "pixmem";  // InstrCount[0] will count pixel array acesses
   InstrName[1] = "comparisons";
   InstrName[2] = "operations";
-  InstrName[3] = "comparisons_2";
 }
 
 // Macros to simplify accessing instrumentation counters:
@@ -156,7 +155,6 @@ void ImageInit(void) { ///
 #define PIXMEM InstrCount[0]
 #define COMPARISONS InstrCount[1]
 #define OPERATIONS InstrCount[2]
-#define COMPARISONS_2 InstrCount[3]
 
 // TIP: Search for PIXMEM or InstrCount to see where it is incremented!
 
@@ -349,13 +347,9 @@ void ImageStats(Image img, uint8* min, uint8* max) { ///
 /// Check if pixel position (x,y) is inside img.
 int ImageValidPos(Image img, int x, int y) { ///
   assert (img != NULL);
-  COMPARISONS++;
   if (0 > x) return 0;
-  COMPARISONS++;
   if (x >= img->width) return 0;
-  COMPARISONS++;
   if (0 > y) return 0;
-  COMPARISONS++;
   if (y >= img->height) return 0;
   return 1;
   // return (0 <= x && x < img->width) && (0 <= y && y < img->height);
@@ -623,7 +617,7 @@ int ImageMatchSubImage(Image img1, int x, int y, Image img2) { ///
   // Insert your code here!
   for (int i = 0; i < img2->width; i++) {
     for (int j = 0; j < img2->height; j++) {
-      COMPARISONS_2++;
+      COMPARISONS++;
       if(ImageGetPixel(img1,x+i,y+j) != ImageGetPixel(img2,i,j) ) return 0;
     }
   }
