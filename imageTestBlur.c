@@ -31,7 +31,6 @@ int main(int argc, char* argv[]) {
     // InstrPrint(1,NULL); // header
     for (int i = atoi(argv[2]); i <= atoi(argv[4]); i+= atoi(argv[3])) {
       Image img = ImageCreate(i,i,MAX_VAL);
-      printf("1big-> %p %u\n",img,ImageGetPixel(img,0,0));
       InstrReset(); // to reset instrumentation
       ImageBlur(img, BLUR_DX, BLUR_DY);
       InstrPrintTest(i*i); // Version 1 print

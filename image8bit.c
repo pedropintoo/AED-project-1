@@ -721,12 +721,8 @@ void ImageBlur2(Image img, int dx, int dy) { ///
   int rx, lx, by, ty;
   unsigned long int l_bottom, r_bottom, l_top, r_top;
 
-  COMPARISONS++;
   for (int x = 0; x < w; x++) {
-    COMPARISONS++;
-    COMPARISONS++;
     for (int y = 0; y < h; y++) {
-      COMPARISONS++;
       rx = (x + dx >= w) ? w - 1 : x + dx;
       by = (y + dy >= h) ? h - 1 : y + dy;
       lx = (x - dx < 0) ? 0 : x - dx;
@@ -739,40 +735,19 @@ void ImageBlur2(Image img, int dx, int dy) { ///
       PIXMEM += 3;
       COMPARISONS+= 2;
       
-      // More complex, but we gain 1 OPERATION...
-      COMPARISONS++;
-      if (lx == 0) {
-        divisor = (rx-lx+1) * (by-ty+1);
+      l_top = (lx == 0 || ty == 0) ? 0 : cumSum[lx-1][ty-1]; // to: increment top left sums (compensate)
 
-        OPERATIONS += 2;
-        mean = (double)(r_bottom - l_bottom - r_top) / divisor; // l_top = 0 -> -1 OPERATIONS
+      divisor = (rx-lx+1) * (by-ty+1);
 
-      } else {
-        COMPARISONS++;
-        if (ty == 0) {
-          divisor = (rx-lx+1) * (by-ty+1);
-
-          OPERATIONS += 2;
-          mean = (double)(r_bottom - l_bottom - r_top) / divisor; // l_top = 0 -> -1 OPERATIONS
-
-        } else {
-          l_top = cumSum[lx-1][ty-1]; // to: increment top left sums (compensate)
-          PIXMEM++;
-
-          divisor = (rx-lx+1) * (by-ty+1);
-          OPERATIONS += 3;
-          mean = (double)(r_bottom - l_bottom - r_top + l_top) / divisor;
-        }
-      }
+      mean = (double)(r_bottom - l_bottom - r_top + l_top) / divisor;
+      OPERATIONS += 3;
 
       ImageSetPixel(img,x,y,(int)(mean + 0.5));
     }
   }
 
   // Free cum sum
-  COMPARISONS++;
   for (unsigned i = 0; i < img->width; i++) {
-    COMPARISONS++;
     free(cumSum[i]);
   }
   free(cumSum);
@@ -789,19 +764,11 @@ void ImageBlur(Image img, int dx, int dy) { ///
 
   int sum, count;
 
-  COMPARISONS++; // first
   for (int x = 0; x < w; x++) {
-    COMPARISONS++; // all + last
-    COMPARISONS++;
     for (int y = 0; y < h; y++) {
-      COMPARISONS++; 
       sum = 0; count = 0;
-      COMPARISONS++;
       for(int px = -dx; px <= dx; px++) {
-        COMPARISONS++;
-        COMPARISONS++;
         for (int py = -dy; py <= dy; py++) {
-          COMPARISONS++;
           COMPARISONS++;
           if (ImageValidPos(img,x+px,y+py)) {
             OPERATIONS++;
@@ -815,9 +782,7 @@ void ImageBlur(Image img, int dx, int dy) { ///
   }
 
   // copy the image
-  COMPARISONS++;
   for(size_t idx = 0; idx < h*w; idx++) {
-    COMPARISONS++;
     img->pixel[idx] = blurImg->pixel[idx];
     PIXMEM++;
   }

@@ -1,6 +1,6 @@
 %% Constantes a alterar.....
 
-OPTION = 1; 
+OPTION = 0; 
 
 % 0-> Pior caso (encontrar a imagem)
 % 1-> Pior caso (nao encontrar a imagem)
@@ -24,10 +24,10 @@ colorV1 = "o-";
 status = system(sprintf("./execute_locateTests.sh %d %d %d %d %d %d",OPTION,size_fix,size_min,size_inc,size_max)); 
 customLabelx = "Numero de pixeis da imagem";
 if OPTION == 0
-    customLegend = sprintf("Pior caso (imagem encontranda) - s%dx%d",size_fix,size_fix);
+    customLegend = sprintf("Pior caso (imagem encontrada) - s%dx%d",size_fix,size_fix);
     path = "bySize/worstCaseFound";
 elseif OPTION == 1
-    customLegend = sprintf("Pior caso (imagem nao encontranda) - s%dx%d",size_fix,size_fix);
+    customLegend = sprintf("Pior caso (imagem nao encontrada) - s%dx%d",size_fix,size_fix);
     path = "bySize/worstCaseNotFound";
 elseif OPTION == 2
     customLegend = sprintf("Melhor caso (imagem encontrada) - s%dx%d",size_fix,size_fix);

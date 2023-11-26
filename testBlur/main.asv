@@ -1,13 +1,13 @@
 %% Constantes a alterar.....
 
-OPTION = 1; 
+OPTION = 0; 
 % 0-> Por size (mesma janela de blur, imagem varia)
 % 1-> Por window (mesma imagem, janela de blur varia)
 
 % Size -> largura da imagem (sendo a imagem quadrada) 
 size_min = 1;
 size_inc = 1;
-size_max = 100; % w = h
+size_max = 75; % w = h 75
 
 % Window -> janela do blur (sendo a janela quadrada) 
 window_min = 1;
@@ -19,8 +19,8 @@ onlyV2 = 1; % 1-> Graficos com apenas a versao 2 (algoritmo melhorado)
 
 printAll = 1;
 
-colorV1 = "o-";
-colorV2 = "o-";
+colorV1 = "or-";
+colorV2 = "ob-";
 % Na OPTION == 0:
 % Para sobrepor ao grafico outro com window_max=2 (dx=dy), basta retirar "r" e "b" das
 % cores de cima e mudar os valores window_max e executar "Executar e ler dados"
