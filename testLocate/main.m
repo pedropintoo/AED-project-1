@@ -1,6 +1,6 @@
 %% Constantes a alterar.....
 
-OPTION = 0; 
+OPTION = 1; 
 
 % 0-> Pior caso (encontrar a imagem)
 % 1-> Pior caso (nao encontrar a imagem)
