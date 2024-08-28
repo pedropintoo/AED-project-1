@@ -2,6 +2,12 @@
 
 # Nota: 19.62
 
+Pedro Pinto (115304)
+
+João Pinto (104384) 
+
+## AED-project-1
+
 Este é o código-fonte para o primeiro projeto de AED 2023-2024.
 
 ## Ficheiros
