@@ -1,5 +1,7 @@
 # 2ano/1semestre/AED/AED-project-1
 
+# Nota: 19.62
+
 Este é o código-fonte para o primeiro projeto de AED 2023-2024.
 
 ## Ficheiros
